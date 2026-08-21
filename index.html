@@ -86,11 +86,10 @@
     }
 
     .btn-play { background: linear-gradient(180deg, #ff4141 0%, #c41818 100%); }
-    .btn-host { background: linear-gradient(180deg, #3db2ff 0%, #1072d6 100%); }
-    .btn-join { background: linear-gradient(180deg, #33cc66 0%, #1e833e 100%); }
+    .btn-multi { background: linear-gradient(180deg, #3db2ff 0%, #1072d6 100%); }
     .btn-help { background: linear-gradient(180deg, #ab47bc 0%, #6a1b9a 100%); }
     .btn-settings { background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%); }
-    .btn-secondary { background: linear-gradient(180deg, #f57c00 0%, #e65100 100%); }
+    .btn-secondary { background: linear-gradient(180deg, #33cc66 0%, #1e833e 100%); }
 
     .banner-container {
       width: 100%;
@@ -173,13 +172,6 @@
       color: #111;
     }
 
-    .code-box {
-      text-align: center;
-      letter-spacing: 4px;
-      font-size: 20px !important;
-      font-weight: 800 !important;
-    }
-
     .form-row { display: flex; gap: 10px; }
     .half { flex: 1; }
 
@@ -232,7 +224,7 @@
     .toggle-on { background: #44d64a; color: #fff; }
     .toggle-off { background: #ff4141; color: #fff; }
 
-    /* Lobby & Game Cards */
+    /* Game Cards */
     .game-card {
       background: #1e130e;
       border: 3px solid #ffca28;
@@ -250,37 +242,23 @@
       border-radius: 12px;
       padding: 12px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    .room-code-tag {
-      font-size: 28px;
+    .player-edit-input {
+      width: 100%;
+      text-align: center;
+      font-size: 20px;
       font-weight: 800;
       color: #ffca28;
-      letter-spacing: 3px;
+      background: #1e130e;
+      border: 2px solid #ffca28;
+      border-radius: 8px;
+      padding: 6px;
+      outline: none;
     }
-
-    .player-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      max-height: 220px;
-      overflow-y: auto;
-    }
-
-    .player-badge {
-      background: #2a1a13;
-      border: 2px solid #3d2518;
-      padding: 10px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .player-badge.host { border-color: #ffca28; }
-    .badge-icon { font-size: 16px; }
 
     /* Secret Card Reveal */
     .secret-box {
@@ -333,11 +311,10 @@
       </div>
 
       <div class="button-list">
-        <button class="btn btn-play" id="playBtn">💀 PLAY NOW 💀</button>
-        <button class="btn btn-host" id="hostBtn">HOST LOBBY</button>
-        <button class="btn btn-join" id="joinBtn">JOIN ROOM</button>
-        <button class="btn btn-help" id="helpBtn">HOW TO PLAY</button>
-        <button class="btn btn-settings" id="settingsBtn">SETTINGS</button>
+        <button class="btn btn-play" id="playNowBtn">💀 PLAY NOW 💀</button>
+        <button class="btn btn-multi" id="multiplayerBtn">🌐 MULTIPLAYER</button>
+        <button class="btn btn-help" id="helpBtn">📖 HOW TO PLAY</button>
+        <button class="btn btn-settings" id="settingsBtn">⚙️ SETTINGS</button>
       </div>
 
       <div class="banner-container" id="pigBanner">
@@ -345,50 +322,30 @@
       </div>
     </div>
 
-    <!-- SCREEN 2: WAITING LOBBY -->
-    <div class="screen hidden" id="lobbyScreen">
-      <div class="title-banner">
-        <span>LOBBY ROOM</span>
-      </div>
-
-      <div class="game-card">
-        <div class="room-header-box">
-          <div style="font-size: 12px; color: #aaa; font-weight:700;">ROOM CODE</div>
-          <div class="room-code-tag" id="lobbyRoomCode">4829</div>
-          <div style="font-size: 13px; color: #ddd; margin-top: 4px;" id="lobbySettingsSummary">Category: Random | Imposters: 1</div>
-        </div>
-
-        <div style="font-size: 14px; font-weight: 800; color: #ffca28;">PLAYERS (<span id="playerCountCount">0</span>/<span id="playerCountMax">5</span>)</div>
-        <div class="player-grid" id="playerGrid"></div>
-
-        <button class="btn btn-play" id="startGameBtn">START GAME 🚀</button>
-        <button class="btn btn-settings" id="leaveLobbyBtn">LEAVE LOBBY</button>
-      </div>
-    </div>
-
-    <!-- SCREEN 3: PASS THE PHONE / SECRET REVEAL -->
+    <!-- SCREEN 2: PASS THE PHONE / SECRET REVEAL -->
     <div class="screen hidden" id="revealScreen">
       <div class="title-banner">
-        <span>SECRET ROLE</span>
+        <span>PASS THE PHONE</span>
       </div>
 
       <div class="game-card">
         <div class="room-header-box">
-          <div style="font-size: 14px; color: #aaa; font-weight:700;">PASS PHONE TO</div>
-          <div class="room-code-tag" id="revealPlayerName">PLAYER 1</div>
+          <div style="font-size: 12px; color: #aaa; font-weight:700;">PLAYER <span id="revealStepNum">1</span> OF <span id="revealTotalNum">5</span></div>
+          <div style="font-size: 13px; color: #fff; font-weight:700;">TYPE/EDIT YOUR NAME:</div>
+          <input type="text" class="player-edit-input" id="revealPlayerNameInput" maxlength="12" placeholder="Enter Name" />
         </div>
 
         <div class="secret-box" id="secretBox">
-          <div class="secret-title" id="secretBoxTitle">TAP TO REVEAL</div>
+          <div class="secret-title" id="secretBoxTitle">TAP TO REVEAL ROLE</div>
           <div class="secret-word" id="secretBoxContent">🙈 🙈 🙈</div>
         </div>
 
-        <button class="btn btn-join hidden" id="nextPlayerBtn">NEXT PLAYER ➡️</button>
+        <button class="btn btn-secondary hidden" id="nextPlayerBtn">NEXT PLAYER ➡️</button>
         <button class="btn btn-play hidden" id="startDiscussionBtn">BEGIN GAME 💬</button>
       </div>
     </div>
 
-    <!-- SCREEN 4: DISCUSSION & VOTING -->
+    <!-- SCREEN 3: DISCUSSION & VOTING -->
     <div class="screen hidden" id="votingScreen">
       <div class="title-banner">
         <span>VOTING TIME</span>
@@ -409,17 +366,12 @@
 
   </div>
 
-  <!-- MODAL: HOST LOBBY -->
-  <div class="modal-overlay hidden" id="hostModal">
+  <!-- MODAL: PLAY NOW SETUP (OFFLINE / 1 PHONE) -->
+  <div class="modal-overlay hidden" id="playSetupModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h2>👑 HOST LOBBY</h2>
-        <button class="close-btn" id="closeHostBtn">✖</button>
-      </div>
-
-      <div class="form-group">
-        <label>Your Name</label>
-        <input type="text" id="hostNameInput" placeholder="Enter Host Name" maxlength="12" value="Host Pig" />
+        <h2>💀 GAME SETUP</h2>
+        <button class="close-btn" id="closeSetupBtn">✖</button>
       </div>
 
       <div class="form-group">
@@ -445,29 +397,7 @@
         </div>
       </div>
 
-      <button class="btn btn-play" id="createLobbyBtn">CREATE ROOM 🚀</button>
-    </div>
-  </div>
-
-  <!-- MODAL: JOIN ROOM -->
-  <div class="modal-overlay hidden" id="joinModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h2>🚪 JOIN ROOM</h2>
-        <button class="close-btn" id="closeJoinBtn">✖</button>
-      </div>
-
-      <div class="form-group">
-        <label>Your Name</label>
-        <input type="text" id="joinNameInput" placeholder="Enter Player Name" maxlength="12" value="Naughty Pig" />
-      </div>
-
-      <div class="form-group">
-        <label>Room Code (4 Digits)</label>
-        <input type="number" id="roomCodeInput" placeholder="e.g. 4829" class="code-box" oninput="if(this.value.length > 4) this.value = this.value.slice(0,4);" />
-      </div>
-
-      <button class="btn btn-join" id="enterRoomBtn">ENTER LOBBY 🎮</button>
+      <button class="btn btn-play" id="startGameBtn">START GAME 🚀</button>
     </div>
   </div>
 
@@ -482,19 +412,19 @@
       <div class="rules-content">
         <div class="rule-item">
           <span class="rule-num">1</span>
-          <p><strong>Secret Word:</strong> Everyone gets the secret word except the <em>Naughty Imposter</em>!</p>
+          <p><strong>Pass the Phone:</strong> Hand the phone around. Each player types their name and taps to view their secret word.</p>
         </div>
         <div class="rule-item">
           <span class="rule-num">2</span>
-          <p><strong>Give Clues:</strong> Take turns giving a one-word clue about the secret item.</p>
+          <p><strong>Give Clues:</strong> Take turns saying a one-word clue about the secret word.</p>
         </div>
         <div class="rule-item">
           <span class="rule-num">3</span>
-          <p><strong>Bluffing:</strong> The Imposter doesn't know the word and must fake it to blend in.</p>
+          <p><strong>The Imposter:</strong> Doesn't know the word and must fake it to blend in!</p>
         </div>
         <div class="rule-item">
           <span class="rule-num">4</span>
-          <p><strong>Vote & Win:</strong> Discuss and vote out the suspect!</p>
+          <p><strong>Vote & Win:</strong> Discuss and vote out who you think is the Imposter!</p>
         </div>
       </div>
 
@@ -532,18 +462,17 @@
       // GAME STATE
       let gameState = {
         soundEnabled: true,
-        roomCode: "1234",
         categoryKey: "random",
         activeCategory: "",
         secretWord: "",
         targetPlayerCount: 5,
         imposterCount: 1,
-        players: [], // { name, isHost, isImposter }
+        players: [], // { name, isImposter }
         currentRevealIndex: 0,
         selectedVoteTarget: null
       };
 
-      // FART AUDIO SYNTHESIZER
+      // AUDIO SYNTHESIZER
       function playFartSound() {
         if (!gameState.soundEnabled) return;
         try {
@@ -570,7 +499,7 @@
         document.getElementById(screenId).classList.remove("hidden");
       }
 
-      // MODALS SETUP
+      // MODAL CONTROLS
       const setupModal = (btnId, modalId, closeId) => {
         const btn = document.getElementById(btnId);
         const modal = document.getElementById(modalId);
@@ -579,11 +508,15 @@
         if (close && modal) close.addEventListener("click", () => modal.classList.add("hidden"));
       };
 
-      setupModal("hostBtn", "hostModal", "closeHostBtn");
-      setupModal("joinBtn", "joinModal", "closeJoinBtn");
+      setupModal("playNowBtn", "playSetupModal", "closeSetupBtn");
       setupModal("helpBtn", "helpModal", "closeHelpBtn");
       setupModal("settingsBtn", "settingsModal", "closeSettingsBtn");
       document.getElementById("gotItBtn").addEventListener("click", () => document.getElementById("helpModal").classList.add("hidden"));
+
+      // MULTIPLAYER PLACEHOLDER
+      document.getElementById("multiplayerBtn").addEventListener("click", () => {
+        alert("🌐 Online Multiplayer is coming soon!\n\nFor now, tap 'PLAY NOW' to play offline together on 1 phone!");
+      });
 
       // DYNAMIC IMPOSTERS DROPDOWN
       const playersInput = document.getElementById("playersInput");
@@ -610,59 +543,30 @@
         }
       }
 
-      document.getElementById("hostBtn").addEventListener("click", updateImposterOptions);
+      document.getElementById("playNowBtn").addEventListener("click", updateImposterOptions);
       playersInput.addEventListener("input", updateImposterOptions);
 
-      // CREATE LOBBY
-      document.getElementById("createLobbyBtn").addEventListener("click", () => {
-        const hostName = document.getElementById("hostNameInput").value.trim() || "Host Pig";
+      // START GAME (INITIALIZE MATCH)
+      document.getElementById("startGameBtn").addEventListener("click", () => {
         gameState.targetPlayerCount = parseInt(playersInput.value) || 5;
         gameState.imposterCount = parseInt(impostersSelect.value) || 1;
         gameState.categoryKey = document.getElementById("categorySelect").value;
-        gameState.roomCode = Math.floor(1000 + Math.random() * 9000).toString();
 
-        // Populate Players List
-        gameState.players = [{ name: hostName, isHost: true, isImposter: false }];
-        for (let i = 2; i <= gameState.targetPlayerCount; i++) {
-          gameState.players.push({ name: `Player ${i}`, isHost: false, isImposter: false });
+        // Maintain existing names if re-playing, or create default names
+        if (gameState.players.length !== gameState.targetPlayerCount) {
+          gameState.players = [];
+          for (let i = 1; i <= gameState.targetPlayerCount; i++) {
+            gameState.players.push({ name: `Player ${i}`, isImposter: false });
+          }
         }
 
-        // Render Lobby Screen
-        document.getElementById("lobbyRoomCode").textContent = gameState.roomCode;
-        document.getElementById("lobbySettingsSummary").textContent = `Category: ${gameState.categoryKey.toUpperCase()} | Imposters: ${gameState.imposterCount}`;
-        document.getElementById("playerCountCount").textContent = gameState.players.length;
-        document.getElementById("playerCountMax").textContent = gameState.targetPlayerCount;
-
-        const playerGrid = document.getElementById("playerGrid");
-        playerGrid.innerHTML = "";
-        gameState.players.forEach(p => {
-          const badge = document.createElement("div");
-          badge.className = `player-badge ${p.isHost ? "host" : ""}`;
-          badge.innerHTML = `<span class="badge-icon">${p.isHost ? "👑" : "🐷"}</span> <span>${p.name}</span>`;
-          playerGrid.appendChild(badge);
-        });
-
-        document.getElementById("hostModal").classList.add("hidden");
-        showScreen("lobbyScreen");
+        startNewRound();
+        document.getElementById("playSetupModal").classList.add("hidden");
+        showScreen("revealScreen");
       });
 
-      // LEAVE LOBBY
-      document.getElementById("leaveLobbyBtn").addEventListener("click", () => showScreen("menuScreen"));
-      document.getElementById("playBtn").addEventListener("click", () => document.getElementById("hostBtn").click());
-
-      // ENTER ROOM (JOIN)
-      document.getElementById("enterRoomBtn").addEventListener("click", () => {
-        const roomCode = document.getElementById("roomCodeInput").value.trim();
-        if (roomCode.length !== 4) {
-          alert("⚠️ Enter a valid 4-digit room code.");
-          return;
-        }
-        document.getElementById("joinModal").classList.add("hidden");
-        alert("🎮 Joined successfully! Waiting for host to start...");
-      });
-
-      // START GAME & ASSIGN ROLES
-      document.getElementById("startGameBtn").addEventListener("click", () => {
+      // SETUP NEW ROUND LOGIC
+      function startNewRound() {
         // Pick Category & Secret Word
         let availableCategories = Object.keys(WORD_DATABASE);
         if (gameState.categoryKey !== "random" && WORD_DATABASE[gameState.categoryKey]) {
@@ -685,17 +589,21 @@
           }
         }
 
-        // Start Pass the Phone reveal
         gameState.currentRevealIndex = 0;
-        setupSecretRevealScreen();
-        showScreen("revealScreen");
-      });
+        setupSecretRevealStep();
+      }
 
-      // REVEAL ROLE / PASS THE PHONE LOGIC
-      function setupSecretRevealScreen() {
+      // REVEAL ROLE / PASS THE PHONE STEP
+      function setupSecretRevealStep() {
         const player = gameState.players[gameState.currentRevealIndex];
-        document.getElementById("revealPlayerName").textContent = player.name.toUpperCase();
-        document.getElementById("secretBoxTitle").textContent = "TAP TO REVEAL";
+        
+        document.getElementById("revealStepNum").textContent = gameState.currentRevealIndex + 1;
+        document.getElementById("revealTotalNum").textContent = gameState.players.length;
+        
+        const nameInput = document.getElementById("revealPlayerNameInput");
+        nameInput.value = player.name;
+
+        document.getElementById("secretBoxTitle").textContent = "TAP TO REVEAL ROLE";
         
         const contentBox = document.getElementById("secretBoxContent");
         contentBox.textContent = "🙈 🙈 🙈";
@@ -705,6 +613,13 @@
         document.getElementById("startDiscussionBtn").classList.add("hidden");
       }
 
+      // SAVE EDITABLE NAME ON TYPING
+      document.getElementById("revealPlayerNameInput").addEventListener("input", (e) => {
+        const val = e.target.value.trim();
+        gameState.players[gameState.currentRevealIndex].name = val || `Player ${gameState.currentRevealIndex + 1}`;
+      });
+
+      // TAP SECRET CARD
       document.getElementById("secretBox").addEventListener("click", () => {
         const player = gameState.players[gameState.currentRevealIndex];
         const contentBox = document.getElementById("secretBoxContent");
@@ -727,19 +642,20 @@
         }
       });
 
+      // NEXT PLAYER BUTTON
       document.getElementById("nextPlayerBtn").addEventListener("click", () => {
         gameState.currentRevealIndex++;
-        setupSecretRevealScreen();
+        setupSecretRevealStep();
       });
 
-      // START VOTING SCREEN
+      // BEGIN GAME / START VOTING SCREEN
       document.getElementById("startDiscussionBtn").addEventListener("click", () => {
         document.getElementById("activeCategoryTag").textContent = gameState.activeCategory.toUpperCase();
         const voteList = document.getElementById("voteList");
         voteList.innerHTML = "";
         gameState.selectedVoteTarget = null;
 
-        gameState.players.forEach((p, idx) => {
+        gameState.players.forEach((p) => {
           const voteBtn = document.createElement("button");
           voteBtn.className = "vote-btn";
           voteBtn.innerHTML = `<span>🐷 ${p.name}</span> <span>⭕</span>`;
@@ -762,14 +678,22 @@
         }
 
         const accused = gameState.selectedVoteTarget;
+        let outcomeMessage = "";
+
         if (accused.isImposter) {
-          alert(`🎉 INNOCENTS WIN!\n\n${accused.name} WAS THE IMPOSTER! 😈\n\nThe secret word was: ${gameState.secretWord}`);
+          outcomeMessage = `🎉 INNOCENTS WIN!\n\n${accused.name} WAS THE IMPOSTER! 😈\n\nThe secret word was: ${gameState.secretWord}`;
         } else {
           const imposters = gameState.players.filter(p => p.isImposter).map(p => p.name).join(", ");
-          alert(`💀 IMPOSTERS WIN!\n\n${accused.name} was INNOCENT!\n\nThe real imposter(s): ${imposters}\nSecret word was: ${gameState.secretWord}`);
+          outcomeMessage = `💀 IMPOSTERS WIN!\n\n${accused.name} was INNOCENT!\n\nThe real imposter(s): ${imposters}\nSecret word was: ${gameState.secretWord}`;
         }
 
-        showScreen("menuScreen");
+        const playAgain = confirm(`${outcomeMessage}\n\nDo you want to play another round with the same players?`);
+        if (playAgain) {
+          startNewRound();
+          showScreen("revealScreen");
+        } else {
+          showScreen("menuScreen");
+        }
       });
 
       // SETTINGS SOUND TOGGLE
