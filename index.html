@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -47,6 +47,7 @@
       <div class="form-group">
         <label>Secret Category</label>
         <select id="categorySelect">
+          <option value="random" selected>🎲 Random Category</option>
           <option value="foods">🍕 Delicious Foods</option>
           <option value="animals">🦁 Animals & Wildlife</option>
           <option value="movies">🎬 Famous Movies</option>
@@ -56,22 +57,14 @@
 
       <div class="form-row">
         <div class="form-group half">
-          <label>Players</label>
-          <select id="playersSelect">
-            <option value="3">3 Players</option>
-            <option value="4">4 Players</option>
-            <option value="5" selected>5 Players</option>
-            <option value="6">6 Players</option>
-            <option value="8">8 Players</option>
-            <option value="10">10 Players</option>
-          </select>
+          <label>Players (3–15)</label>
+          <input type="number" id="playersInput" min="3" max="15" value="5" />
         </div>
 
         <div class="form-group half">
           <label>Imposters</label>
           <select id="impostersSelect">
-            <option value="1" selected>1 Imposter</option>
-            <option value="2">2 Imposters</option>
+            <!-- Dynamically populated by script.js -->
           </select>
         </div>
       </div>
