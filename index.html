@@ -108,7 +108,6 @@
       display: block;
     }
 
-    /* Modals & Overlays */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -176,7 +175,6 @@
     .form-row { display: flex; gap: 10px; }
     .half { flex: 1; }
 
-    /* Rules & Settings */
     .rules-content { display: flex; flex-direction: column; gap: 10px; }
     .rule-item {
       display: flex;
@@ -224,7 +222,6 @@
     .toggle-on { background: #44d64a; color: #fff; }
     .toggle-off { background: #ff4141; color: #fff; }
 
-    /* Game Cards & Lobby */
     .game-card {
       background: #1e130e;
       border: 3px solid #ffca28;
@@ -258,19 +255,6 @@
       border-radius: 8px;
     }
 
-    .player-edit-input {
-      width: 100%;
-      text-align: center;
-      font-size: 20px;
-      font-weight: 800;
-      color: #ffca28;
-      background: #1e130e;
-      border: 2px solid #ffca28;
-      border-radius: 8px;
-      padding: 6px;
-      outline: none;
-    }
-
     .lobby-players-list {
       display: flex;
       flex-direction: column;
@@ -291,7 +275,6 @@
       align-items: center;
     }
 
-    /* Secret Card Reveal */
     .secret-box {
       background: #120b08;
       border: 3px dashed #ffca28;
@@ -301,40 +284,17 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      cursor: pointer;
     }
 
     .secret-title { font-size: 14px; color: #aaa; text-transform: uppercase; font-weight: 800; }
-    .secret-word { font-size: 26px; font-weight: 800; color: #ffca28; }
+    .secret-word { font-size: 24px; font-weight: 800; color: #ffca28; }
     .secret-imposter { color: #ff4141 !important; font-size: 22px; }
-
-    /* Voting Grid */
-    .vote-list { display: flex; flex-direction: column; gap: 8px; }
-    .vote-btn {
-      background: #2a1a13;
-      border: 2px solid #3d2518;
-      padding: 12px;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 800;
-      text-align: left;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .vote-btn.selected {
-      border-color: #ff4141;
-      background: #3e1212;
-    }
   </style>
 
-  <!-- Firebase SDKs & Configuration Integration -->
+  <!-- Firebase SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, get, update, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCle5OJPK1Ckiqywcgmlwy8mZMUiwxXsA4",
@@ -349,8 +309,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
-    window.dbModule = { db, ref, set, get, update, onValue, remove, push };
+    window.dbModule = { db, ref, set, get, update, onValue };
   </script>
 </head>
 <body>
@@ -364,8 +323,8 @@
       </div>
 
       <div class="button-list">
-        <button class="btn btn-play" id="playNowBtn">💀 PLAY NOW 💀</button>
-        <button class="btn btn-multi" id="multiplayerBtn">🌐 MULTIPLAYER</button>
+        <button class="btn btn-play" id="playNowBtn">💀 PLAY NOW (OFFLINE) 💀</button>
+        <button class="btn btn-multi" id="multiplayerBtn">🌐 MULTIPLAYER (ONLINE)</button>
         <button class="btn btn-help" id="helpBtn">📖 HOW TO PLAY</button>
         <button class="btn btn-settings" id="settingsBtn">⚙️ SETTINGS</button>
       </div>
@@ -375,7 +334,7 @@
       </div>
     </div>
 
-    <!-- SCREEN 2: HOST LOBBY SCREEN -->
+    <!-- SCREEN 2: HOST LOBBY -->
     <div class="screen hidden" id="hostLobbyScreen">
       <div class="title-banner">
         <span>HOST ROOM LOBBY</span>
@@ -384,7 +343,7 @@
       <div class="game-card">
         <div class="room-header-box">
           <div style="font-size: 12px; color: #aaa; font-weight:700;">SHARE ROOM CODE WITH FRIENDS</div>
-          <div class="code-display" id="hostRoomCodeText">NAUG</div>
+          <div class="code-display" id="hostRoomCodeText">----</div>
         </div>
 
         <div style="font-size: 14px; font-weight: 800; color: #fff;">PLAYERS IN LOBBY (<span id="hostPlayerCount">1</span>):</div>
@@ -396,7 +355,7 @@
       <button class="btn btn-back backToMenuBtn">⬅ EXIT TO MAIN MENU</button>
     </div>
 
-    <!-- SCREEN 3: GUEST WAITING LOBBY SCREEN -->
+    <!-- SCREEN 3: GUEST WAITING LOBBY -->
     <div class="screen hidden" id="guestLobbyScreen">
       <div class="title-banner">
         <span>WAITING LOBBY</span>
@@ -420,7 +379,56 @@
       <button class="btn btn-back backToMenuBtn">⬅ LEAVE ROOM</button>
     </div>
 
-    <!-- SCREEN 4: SECRET REVEAL -->
+    <!-- SCREEN 4: ONLINE PRIVATE ROLE SCREEN -->
+    <div class="screen hidden" id="onlineGameScreen">
+      <div class="title-banner">
+        <span>YOUR SECRET ROLE</span>
+      </div>
+
+      <div class="game-card">
+        <div class="room-header-box">
+          <div style="font-size: 12px; color: #aaa; font-weight:700;">CATEGORY: <span id="onlineCategoryDisplay" style="color:#ffca28;">---</span></div>
+          <div style="font-size: 14px; color: #fff; font-weight:700;">Player: <span id="myOnlineNameDisplay" style="color:#ffca28;">---</span></div>
+        </div>
+
+        <div class="secret-box">
+          <div class="secret-title" id="myRoleTitle">YOUR SECRET IDENTITY</div>
+          <div class="secret-word" id="myRoleContent">Loading role...</div>
+        </div>
+
+        <div style="font-size: 12px; color: #ccc; text-align: center; line-height: 1.4; font-weight: 700;">
+          🔒 Keep your phone private! Discuss with friends, then click below when everyone agrees to reveal identities.
+        </div>
+
+        <button class="btn btn-secondary" id="readyToRevealBtn">✋ READY TO REVEAL ALL ROLES</button>
+        <div id="revealStatusText" style="text-align: center; font-size: 13px; color: #ffca28; font-weight: 700;">
+          Ready votes: 0 / 0
+        </div>
+      </div>
+
+      <button class="btn btn-back backToMenuBtn">⬅ EXIT TO MAIN MENU</button>
+    </div>
+
+    <!-- SCREEN 5: FINAL REVEAL RESULTS -->
+    <div class="screen hidden" id="finalRevealScreen">
+      <div class="title-banner">
+        <span>GAME RESULTS & ROLES</span>
+      </div>
+
+      <div class="game-card">
+        <div class="room-header-box">
+          <div style="font-size: 12px; color: #aaa; font-weight:700;">SECRET WORD WAS</div>
+          <div class="code-display" id="finalSecretWordDisplay">WORD</div>
+        </div>
+
+        <div style="font-size: 14px; font-weight: 800; color: #fff;">ALL PLAYERS' IDENTITIES:</div>
+        <div class="lobby-players-list" id="finalRolesListContainer"></div>
+
+        <button class="btn btn-play" id="backToMenuFromResults">🏠 RETURN TO MAIN MENU</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 6: OFFLINE PASS-THE-PHONE ROLE REVEAL -->
     <div class="screen hidden" id="revealScreen">
       <div class="title-banner">
         <span>SECRET ROLE</span>
@@ -429,38 +437,17 @@
       <div class="game-card">
         <div class="room-header-box">
           <div style="font-size: 12px; color: #aaa; font-weight:700;">PLAYER <span id="revealStepNum">1</span> OF <span id="revealTotalNum">5</span></div>
-          <div style="font-size: 13px; color: #fff; font-weight:700;" id="revealNameBannerTitle">YOUR NAME:</div>
-          <input type="text" class="player-edit-input" id="revealPlayerNameInput" maxlength="12" placeholder="Enter Name" />
+          <div style="font-size: 13px; color: #fff; font-weight:700;">YOUR NAME:</div>
+          <input type="text" class="form-group input" id="revealPlayerNameInput" maxlength="12" style="text-align:center; font-size:18px; font-weight:800; color:#ffca28; background:#1e130e; border:2px solid #ffca28; border-radius:8px; padding:6px;" />
         </div>
 
-        <div class="secret-box" id="secretBox">
+        <div class="secret-box" id="secretBox" style="cursor: pointer;">
           <div class="secret-title" id="secretBoxTitle">TAP TO REVEAL ROLE</div>
           <div class="secret-word" id="secretBoxContent">🙈 🙈 🙈</div>
         </div>
 
         <button class="btn btn-secondary hidden" id="nextPlayerBtn">NEXT PLAYER ➡️</button>
-        <button class="btn btn-play hidden" id="startDiscussionBtn">BEGIN DISCUSSION 💬</button>
-      </div>
-
-      <button class="btn btn-back backToMenuBtn">⬅ EXIT TO MAIN MENU</button>
-    </div>
-
-    <!-- SCREEN 5: DISCUSSION & VOTING -->
-    <div class="screen hidden" id="votingScreen">
-      <div class="title-banner">
-        <span>VOTING TIME</span>
-      </div>
-
-      <div class="game-card">
-        <div class="room-header-box">
-          <div style="font-size: 13px; color: #aaa; font-weight:700;">SECRET CATEGORY</div>
-          <div style="font-size: 20px; font-weight:800; color:#ffca28;" id="activeCategoryTag">FOODS</div>
-        </div>
-
-        <div style="font-size: 14px; font-weight: 800; color: #fff;">VOTE OUT THE IMPOSTER:</div>
-        <div class="vote-list" id="voteList"></div>
-
-        <button class="btn btn-play" id="submitVoteBtn">SUBMIT VOTE 🗳️</button>
+        <button class="btn btn-play hidden" id="startDiscussionBtn">FINISH & EXIT 🏁</button>
       </div>
 
       <button class="btn btn-back backToMenuBtn">⬅ EXIT TO MAIN MENU</button>
@@ -472,7 +459,7 @@
   <div class="modal-overlay hidden" id="playSetupModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h2>💀 GAME SETUP</h2>
+        <h2>💀 OFFLINE SETUP</h2>
         <button class="close-btn" id="closeSetupBtn">✖</button>
       </div>
 
@@ -499,7 +486,7 @@
         </div>
       </div>
 
-      <button class="btn btn-play" id="startGameBtn">START GAME 🚀</button>
+      <button class="btn btn-play" id="startGameBtn">START OFFLINE GAME 🚀</button>
     </div>
   </div>
 
@@ -512,7 +499,7 @@
       </div>
 
       <div style="font-size: 14px; color: #ccc; text-align: center; font-weight: 700;">
-        Play online with friends across different devices!
+        Play online with friends across separate phones!
       </div>
 
       <div class="button-list" style="margin-top: 6px;">
@@ -522,7 +509,7 @@
     </div>
   </div>
 
-  <!-- MODAL: CREATE ROOM CONFIG -->
+  <!-- MODAL: CREATE ROOM -->
   <div class="modal-overlay hidden" id="createRoomModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -550,7 +537,7 @@
     </div>
   </div>
 
-  <!-- MODAL: JOIN ROOM INPUT -->
+  <!-- MODAL: JOIN ROOM -->
   <div class="modal-overlay hidden" id="joinRoomModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -565,7 +552,7 @@
 
       <div class="form-group">
         <label>Enter Room Code</label>
-        <input type="text" id="roomCodeInput" placeholder="e.g. NAUG" maxlength="6" style="text-transform: uppercase;" />
+        <input type="text" id="roomCodeInput" placeholder="e.g. NHSI" maxlength="6" style="text-transform: uppercase;" />
       </div>
 
       <button class="btn btn-multi" id="connectRoomBtn">CONNECT TO ROOM 🚀</button>
@@ -583,19 +570,15 @@
       <div class="rules-content">
         <div class="rule-item">
           <span class="rule-num">1</span>
-          <p><strong>Pass the Phone:</strong> Hand the phone around. Each player types their name and taps to view their secret word.</p>
+          <p><strong>Online Mode:</strong> Each player uses their own phone. Host creates a room, players join using code.</p>
         </div>
         <div class="rule-item">
           <span class="rule-num">2</span>
-          <p><strong>Give Clues:</strong> Take turns saying a one-word clue about the secret word.</p>
+          <p><strong>Private Roles:</strong> You only see your own role on your phone. Imposters must fake it!</p>
         </div>
         <div class="rule-item">
           <span class="rule-num">3</span>
-          <p><strong>The Imposter:</strong> Doesn't know the word and must fake it to blend in!</p>
-        </div>
-        <div class="rule-item">
-          <span class="rule-num">4</span>
-          <p><strong>Vote & Win:</strong> Discuss and vote out who you think is the Imposter!</p>
+          <p><strong>Mutual Reveal:</strong> Once discussion is finished, all players click "Ready to Reveal" to unlock identities together.</p>
         </div>
       </div>
 
@@ -634,11 +617,7 @@
         categoryKey: "random",
         activeCategory: "",
         secretWord: "",
-        targetPlayerCount: 5,
-        imposterCount: 1,
-        players: [], 
-        currentRevealIndex: 0,
-        selectedVoteTarget: null,
+        players: [],
         isHost: false,
         roomCode: "",
         myNickname: ""
@@ -671,7 +650,7 @@
 
       document.querySelectorAll(".backToMenuBtn").forEach(btn => {
         btn.addEventListener("click", () => {
-          if (confirm("Are you sure you want to exit to the Main Menu? Current progress will be lost.")) {
+          if (confirm("Exit to Main Menu? Current game progress will be lost.")) {
             showScreen("menuScreen");
           }
         });
@@ -707,39 +686,56 @@
       });
       document.getElementById("closeJoinBtn").addEventListener("click", () => joinRoomModal.classList.add("hidden"));
 
-      // FIREBASE ROOM LISTENER SYNC
+      // REALTIME FIREBASE LISTENERS FOR ONLINE SYNC
       function listenToRoom(code) {
         const { db, ref, onValue } = window.dbModule;
         
-        // Listen to player joins
+        // 1. Listen for players joining lobby
         const playersRef = ref(db, 'rooms/' + code + '/players');
         onValue(playersRef, (snapshot) => {
           const data = snapshot.val();
           if (data) {
-            gameState.players = Object.values(data).map(p => ({ name: p.name, isImposter: p.isImposter || false }));
+            gameState.players = Object.values(data);
             updateLobbyUI();
           }
         });
 
-        // Listen to game start trigger for guests
+        // 2. Listen for game status updates
         const roomRef = ref(db, 'rooms/' + code);
         onValue(roomRef, (snapshot) => {
           const roomData = snapshot.val();
-          if (roomData && roomData.status === 'playing' && !gameState.isHost) {
+          if (!roomData) return;
+
+          if (roomData.status === 'playing' && !gameState.isHost) {
             gameState.activeCategory = roomData.category;
             gameState.secretWord = roomData.secretWord;
-            // Find my role from players
-            const me = gameState.players.find(p => p.name === gameState.myNickname);
-            if (me && roomData.imposters && roomData.imposters.includes(me.name)) {
-              me.isImposter = true;
+            if (roomData.players) {
+              gameState.players = Object.values(roomData.players);
             }
-            showScreen('revealScreen');
-            setupSecretRevealStep();
+            showOnlineRoleScreen();
+          }
+
+          if (roomData.status === 'revealed') {
+            if (roomData.players) {
+              gameState.players = Object.values(roomData.players);
+            }
+            gameState.secretWord = roomData.secretWord;
+            showFinalResultsScreen();
+          }
+
+          // Update ready counter UI
+          if (roomData.readyForReveal && roomData.status === 'playing') {
+            const readyCount = Object.keys(roomData.readyForReveal).length;
+            const totalCount = gameState.players.length;
+            const statusEl = document.getElementById("revealStatusText");
+            if (statusEl) {
+              statusEl.textContent = `Ready votes: ${readyCount} / ${totalCount}`;
+            }
           }
         });
       }
 
-      // CREATE ROOM FIREBASE
+      // CREATE ROOM
       document.getElementById("confirmCreateRoomBtn").addEventListener("click", () => {
         const hostName = document.getElementById("hostNameInput").value.trim() || "Host";
         gameState.isHost = true;
@@ -754,7 +750,7 @@
           status: 'lobby',
           category: gameState.categoryKey,
           players: {
-            [hostName]: { name: hostName, isHost: true }
+            [hostName]: { name: hostName, isImposter: false }
           }
         }).then(() => {
           document.getElementById("hostRoomCodeText").textContent = gameState.roomCode;
@@ -766,7 +762,7 @@
         });
       });
 
-      // JOIN ROOM FIREBASE
+      // JOIN ROOM
       document.getElementById("connectRoomBtn").addEventListener("click", () => {
         const name = document.getElementById("joinPlayerName").value.trim();
         const code = document.getElementById("roomCodeInput").value.trim().toUpperCase();
@@ -791,9 +787,8 @@
             gameState.myNickname = name;
             gameState.roomCode = code;
 
-            // Add player to room database
             const playerRef = ref(db, 'rooms/' + code + '/players/' + name);
-            set(playerRef, { name: name, isHost: false }).then(() => {
+            set(playerRef, { name: name, isImposter: false }).then(() => {
               document.getElementById("guestRoomCodeText").textContent = code;
               document.getElementById("guestDisplayName").textContent = name;
               listenToRoom(code);
@@ -807,7 +802,6 @@
       });
 
       function updateLobbyUI() {
-        // Host view
         const hostList = document.getElementById("hostPlayersListContainer");
         if (hostList) {
           hostList.innerHTML = "";
@@ -820,7 +814,6 @@
           });
         }
 
-        // Guest view
         const guestList = document.getElementById("guestPlayersListContainer");
         if (guestList) {
           guestList.innerHTML = "";
@@ -835,12 +828,11 @@
 
       // HOST STARTS ONLINE GAME
       document.getElementById("hostStartGameBtn").addEventListener("click", () => {
-        if (gameState.players.length < 1) {
-          alert("⚠️ Not enough players!");
+        if (gameState.players.length < 2) {
+          alert("⚠️ You need at least 2 players to start online!");
           return;
         }
 
-        // Pick category and secret word
         let availableCategories = Object.keys(WORD_DATABASE);
         let activeCat = gameState.categoryKey;
         if (activeCat === "random" || !WORD_DATABASE[activeCat]) {
@@ -849,28 +841,100 @@
         const words = WORD_DATABASE[activeCat];
         const secretWord = words[Math.floor(Math.random() * words.length)];
 
-        // Assign imposters
+        // Assign imposters securely
         let impCount = gameState.players.length >= 6 ? 2 : 1;
         let shuffled = [...gameState.players].sort(() => 0.5 - Math.random());
-        let imposters = shuffled.slice(0, impCount).map(p => p.name);
+        let imposterNames = shuffled.slice(0, impCount).map(p => p.name);
+
+        let updatedPlayers = {};
+        gameState.players.forEach(p => {
+          let isImp = imposterNames.includes(p.name);
+          updatedPlayers[p.name] = { name: p.name, isImposter: isImp };
+        });
 
         gameState.activeCategory = activeCat;
         gameState.secretWord = secretWord;
-        gameState.players.forEach(p => {
-          if (imposters.includes(p.name)) p.isImposter = true;
-        });
+        gameState.players = Object.values(updatedPlayers);
 
-        // Update database so guests start too
         const { db, ref, update } = window.dbModule;
         update(ref(db, 'rooms/' + gameState.roomCode), {
           status: 'playing',
           category: activeCat,
           secretWord: secretWord,
-          imposters: imposters
+          players: updatedPlayers
         }).then(() => {
-          showScreen("revealScreen");
-          setupSecretRevealStep();
+          showOnlineRoleScreen();
         });
+      });
+
+      // SHOW ONLINE PRIVATE ROLE SCREEN
+      function showOnlineRoleScreen() {
+        showScreen("onlineGameScreen");
+        document.getElementById("onlineCategoryDisplay").textContent = gameState.activeCategory.toUpperCase();
+        document.getElementById("myOnlineNameDisplay").textContent = gameState.myNickname;
+
+        // Find my personal status
+        const me = gameState.players.find(p => p.name === gameState.myNickname);
+        const titleEl = document.getElementById("myRoleTitle");
+        const contentEl = document.getElementById("myRoleContent");
+
+        if (me && me.isImposter) {
+          titleEl.textContent = "YOUR ROLE:";
+          contentEl.textContent = "😈 YOU ARE THE IMPOSTER!";
+          contentEl.className = "secret-word secret-imposter";
+        } else {
+          titleEl.textContent = `SECRET WORD (${gameState.activeCategory.toUpperCase()}):`;
+          contentEl.textContent = gameState.secretWord;
+          contentEl.className = "secret-word";
+        }
+      }
+
+      // READY TO REVEAL BUTTON (MUTUAL ALL-PLAYER CONFIRMATION)
+      document.getElementById("readyToRevealBtn").addEventListener("click", () => {
+        const { db, ref, set } = window.dbModule;
+        const readyRef = ref(db, 'rooms/' + gameState.roomCode + '/readyForReveal/' + gameState.myNickname);
+        
+        set(readyRef, true).then(() => {
+          document.getElementById("readyToRevealBtn").disabled = true;
+          document.getElementById("readyToRevealBtn"].textContent = "⏳ WAITING FOR OTHER PLAYERS...";
+          document.getElementById("readyToRevealBtn").style.background = "#555";
+
+          // Check if all players are ready (Host can trigger full reveal or check count)
+          const { get } = window.dbModule;
+          get(ref(db, 'rooms/' + gameState.roomCode)).then((snapshot) => {
+            const data = snapshot.val();
+            if (data && data.readyForReveal && data.players) {
+              const readyCount = Object.keys(data.readyForReveal).length;
+              const totalCount = Object.keys(data.players).length;
+              if (readyCount >= totalCount) {
+                // All players ready! Switch status to revealed for everyone
+                update(ref(db, 'rooms/' + gameState.roomCode), { status: 'revealed' });
+              }
+            }
+          });
+        });
+      });
+
+      function showFinalResultsScreen() {
+        showScreen("finalRevealScreen");
+        document.getElementById("finalSecretWordDisplay").textContent = gameState.secretWord;
+        const listContainer = document.getElementById("finalRolesListContainer");
+        listContainer.innerHTML = "";
+
+        gameState.players.forEach(p => {
+          const chip = document.createElement("div");
+          chip.className = "lobby-player-chip";
+          if (p.isImposter) {
+            chip.innerHTML = `<span>😈 ${p.name}</span> <span style="font-size:11px; color:#ff4141; font-weight:800;">IMPOSTER</span>`;
+          } else {
+            chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#44d64a; font-weight:800;">INNOCENT</span>`;
+          }
+          listContainer.appendChild(chip);
+        });
+      }
+
+      document.getElementById("backToMenuFromResults").addEventListener("click", () => {
+        showScreen("menuScreen");
       });
 
       // OFFLINE MODE SETUP
@@ -895,46 +959,40 @@
       playersInput.addEventListener("input", updateImposterOptions);
 
       document.getElementById("startGameBtn").addEventListener("click", () => {
-        gameState.targetPlayerCount = parseInt(playersInput.value) || 5;
-        gameState.imposterCount = parseInt(impostersSelect.value) || 1;
+        let targetCount = parseInt(playersInput.value) || 5;
+        let impCount = parseInt(impostersSelect.value) || 1;
         gameState.categoryKey = document.getElementById("categorySelect").value;
 
         gameState.players = [];
-        for (let i = 1; i <= gameState.targetPlayerCount; i++) {
+        for (let i = 1; i <= targetCount; i++) {
           gameState.players.push({ name: `Player ${i}`, isImposter: false });
         }
 
-        startOfflineRound();
-        document.getElementById("playSetupModal").classList.add("hidden");
-        showScreen("revealScreen");
-      });
-
-      function startOfflineRound() {
         let availableCategories = Object.keys(WORD_DATABASE);
         gameState.activeCategory = (gameState.categoryKey !== "random") ? gameState.categoryKey : availableCategories[Math.floor(Math.random() * availableCategories.length)];
         const categoryWords = WORD_DATABASE[gameState.activeCategory];
         gameState.secretWord = categoryWords[Math.floor(Math.random() * categoryWords.length)];
 
-        gameState.players.forEach(p => p.isImposter = false);
         let assigned = 0;
-        while (assigned < gameState.imposterCount) {
+        while (assigned < impCount) {
           let randIdx = Math.floor(Math.random() * gameState.players.length);
           if (!gameState.players[randIdx].isImposter) {
             gameState.players[randIdx].isImposter = true;
             assigned++;
           }
         }
-        gameState.currentRevealIndex = 0;
-        setupSecretRevealStep();
-      }
 
-      function setupSecretRevealStep() {
-        const player = gameState.players[gameState.currentRevealIndex] || gameState.players[0];
+        gameState.currentRevealIndex = 0;
+        showScreen("revealScreen");
+        setupOfflineRevealStep();
+        document.getElementById("playSetupModal").classList.add("hidden");
+      });
+
+      function setupOfflineRevealStep() {
+        const player = gameState.players[gameState.currentRevealIndex];
         document.getElementById("revealStepNum").textContent = gameState.currentRevealIndex + 1;
         document.getElementById("revealTotalNum").textContent = gameState.players.length;
-        
-        const nameInput = document.getElementById("revealPlayerNameInput");
-        nameInput.value = player.name;
+        document.getElementById("revealPlayerNameInput").value = player.name;
 
         document.getElementById("secretBoxTitle").textContent = "TAP TO REVEAL ROLE";
         const contentBox = document.getElementById("secretBoxContent");
@@ -976,44 +1034,11 @@
 
       document.getElementById("nextPlayerBtn").addEventListener("click", () => {
         gameState.currentRevealIndex++;
-        setupSecretRevealStep();
+        setupOfflineRevealStep();
       });
 
       document.getElementById("startDiscussionBtn").addEventListener("click", () => {
-        document.getElementById("activeCategoryTag").textContent = gameState.activeCategory.toUpperCase();
-        const voteList = document.getElementById("voteList");
-        voteList.innerHTML = "";
-        gameState.selectedVoteTarget = null;
-
-        gameState.players.forEach((p) => {
-          const voteBtn = document.createElement("button");
-          voteBtn.className = "vote-btn";
-          voteBtn.innerHTML = `<span>🐷 ${p.name}</span> <span>⭕</span>`;
-          voteBtn.addEventListener("click", () => {
-            document.querySelectorAll(".vote-btn").forEach(b => b.classList.remove("selected"));
-            voteBtn.classList.add("selected");
-            gameState.selectedVoteTarget = p;
-          });
-          voteList.appendChild(voteBtn);
-        });
-
-        showScreen("votingScreen");
-      });
-
-      document.getElementById("submitVoteBtn").addEventListener("click", () => {
-        if (!gameState.selectedVoteTarget) {
-          alert("⚠️ Tap on a player to vote them out!");
-          return;
-        }
-
-        const accused = gameState.selectedVoteTarget;
-        let outcomeMessage = accused.isImposter ? 
-          `🎉 INNOCENTS WIN!\n\n${accused.name} WAS THE IMPOSTER! 😈\n\nSecret word: ${gameState.secretWord}` : 
-          `💀 IMPOSTERS WIN!\n\n${accused.name} was INNOCENT!\nSecret word: ${gameState.secretWord}`;
-
-        if (confirm(`${outcomeMessage}\n\nReturn to Main Menu?`)) {
-          showScreen("menuScreen");
-        }
+        showScreen("menuScreen");
       });
 
       const soundToggleBtn = document.getElementById("soundToggleBtn");
