@@ -1,0 +1,120 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Fredoka', cursive, sans-serif;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #120b08;
+}
+
+.menu-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background: url('menu-bg.jpg') center/contain no-repeat;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.menu-board {
+  width: 32%;
+  margin-right: 17%;
+  margin-top: 5%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 2px solid #000;
+  color: #fff;
+  text-align: center;
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.stat-value {
+  color: #ffcc00;
+  font-size: 13px;
+}
+
+.button-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 3px solid #000000;
+  border-radius: 12px;
+  cursor: pointer;
+  text-shadow: 2px 2px 0px #000;
+  box-shadow: inset 0px 4px 0px rgba(255, 255, 255, 0.4), 0px 5px 0px #000;
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: inset 0px 2px 0px rgba(255, 255, 255, 0.4), 0px 1px 0px #000;
+}
+
+.btn-play {
+  background: linear-gradient(180deg, #ff4141 0%, #c41818 100%);
+}
+
+.btn-host {
+  background: linear-gradient(180deg, #3db2ff 0%, #1072d6 100%);
+}
+
+.btn-join {
+  background: linear-gradient(180deg, #ffc800 0%, #d89600 100%);
+}
+
+.btn-help {
+  background: linear-gradient(180deg, #44d64a 0%, #208e25 100%);
+}
+
+.btn-settings {
+  background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%);
+}
+
+.join-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.code-input {
+  width: 100%;
+  padding: 6px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 2px solid #000;
+  outline: none;
+}
