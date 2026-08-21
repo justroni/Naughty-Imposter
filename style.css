@@ -15,7 +15,7 @@ body, html {
   align-items: center;
 }
 
-/* Locks artwork aspect ratio to 16:9 */
+/* Widescreen / Landscape Layout */
 .menu-wrapper {
   position: relative;
   width: 100vw;
@@ -28,22 +28,22 @@ body, html {
   align-items: center;
 }
 
-/* Position board relative to background image */
 .menu-board {
   position: absolute;
   right: 17.5%;
-  top: 22%;
+  top: 21%;
   width: 27.5%;
+  height: 68%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
 }
 
 .stats-row {
   display: flex;
   justify-content: space-around;
   background: rgba(0, 0, 0, 0.5);
-  padding: 4px 8px;
+  padding: 4px;
   border-radius: 8px;
   border: 2px solid #000;
   color: #fff;
@@ -54,61 +54,40 @@ body, html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 10px;
+  font-size: 1.6vh;
   font-weight: 700;
 }
 
 .stat-value {
   color: #ffcc00;
-  font-size: 12px;
+  font-size: 1.8vh;
 }
 
 .button-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 1.2vh;
 }
 
 .btn {
   width: 100%;
-  padding: 8px 0;
-  font-size: 14px;
+  padding: 1.2vh 0;
+  font-size: 1.8vh;
   font-weight: 800;
   color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 2px solid #000000;
+  border: 2px solid #000;
   border-radius: 8px;
   cursor: pointer;
   text-shadow: 1px 1px 0px #000;
   box-shadow: inset 0px 2px 0px rgba(255, 255, 255, 0.4), 0px 3px 0px #000;
-  transition: transform 0.1s ease;
 }
 
-.btn:active {
-  transform: translateY(2px);
-  box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.4), 0px 1px 0px #000;
-}
-
-.btn-play {
-  background: linear-gradient(180deg, #ff4141 0%, #c41818 100%);
-}
-
-.btn-host {
-  background: linear-gradient(180deg, #3db2ff 0%, #1072d6 100%);
-}
-
-.btn-join {
-  background: linear-gradient(180deg, #ffc800 0%, #d89600 100%);
-}
-
-.btn-help {
-  background: linear-gradient(180deg, #44d64a 0%, #208e25 100%);
-}
-
-.btn-settings {
-  background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%);
-}
+.btn-play { background: linear-gradient(180deg, #ff4141 0%, #c41818 100%); }
+.btn-host { background: linear-gradient(180deg, #3db2ff 0%, #1072d6 100%); }
+.btn-join { background: linear-gradient(180deg, #ffc800 0%, #d89600 100%); }
+.btn-help { background: linear-gradient(180deg, #44d64a 0%, #208e25 100%); }
+.btn-settings { background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%); }
 
 .join-container {
   display: flex;
@@ -120,9 +99,40 @@ body, html {
   width: 100%;
   padding: 4px;
   text-align: center;
-  font-size: 12px;
+  font-size: 1.6vh;
   font-weight: 700;
   border-radius: 6px;
   border: 2px solid #000;
   outline: none;
+}
+
+/* Mobile Vertical (Portrait) Adjustment */
+@media (orientation: portrait) {
+  .menu-wrapper {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    background-size: cover;
+    background-position: 72% center;
+  }
+
+  .menu-board {
+    position: absolute;
+    right: 8%;
+    left: 8%;
+    top: 28%;
+    width: 84%;
+    height: 60vh;
+  }
+
+  .btn {
+    font-size: 18px;
+    padding: 12px 0;
+    border-radius: 12px;
+  }
+
+  .stat-box { font-size: 11px; }
+  .stat-value { font-size: 13px; }
+  .code-input { font-size: 14px; padding: 8px; }
 }
