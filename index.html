@@ -330,6 +330,28 @@
       background: #3e1212;
     }
   </style>
+
+  <!-- Firebase SDKs & Configuration Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get, update, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCle5OJPK1Ckiqywcgmlwy8mZMUiwxXsA4",
+      authDomain: "naughty-imposter.firebaseapp.com",
+      databaseURL: "https://naughty-imposter-default-rtdb.firebaseio.com",
+      projectId: "naughty-imposter",
+      storageBucket: "naughty-imposter.firebasestorage.app",
+      messagingSenderId: "724516596794",
+      appId: "1:724516596794:web:e710bb42a1333f670d1903",
+      measurementId: "G-VLLX9D5SH3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.dbModule = { db, ref, set, get, update, onValue, remove, push };
+  </script>
 </head>
 <body>
 
