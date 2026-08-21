@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Elements - Host
+  // Host Elements
   const hostBtn = document.getElementById("hostBtn");
   const hostModal = document.getElementById("hostModal");
   const closeHostBtn = document.getElementById("closeHostBtn");
@@ -7,11 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const playersInput = document.getElementById("playersInput");
   const impostersSelect = document.getElementById("impostersSelect");
 
-  // Elements - Join
+  // Join Elements
   const joinBtn = document.getElementById("joinBtn");
   const joinModal = document.getElementById("joinModal");
   const closeJoinBtn = document.getElementById("closeJoinBtn");
   const enterRoomBtn = document.getElementById("enterRoomBtn");
+
+  // Help Elements
+  const helpBtn = document.getElementById("helpBtn");
+  const helpModal = document.getElementById("helpModal");
+  const closeHelpBtn = document.getElementById("closeHelpBtn");
+  const gotItBtn = document.getElementById("gotItBtn");
 
   // --- HOST MODAL LOGIC ---
   hostBtn.addEventListener("click", () => {
@@ -90,5 +96,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     alert(`🎮 Joining Lobby!\n\nPlayer: ${playerName}\nRoom Code: ${roomCode}`);
     joinModal.classList.add("hidden");
+  });
+
+  // --- HOW TO PLAY MODAL LOGIC ---
+  helpBtn.addEventListener("click", () => {
+    helpModal.classList.remove("hidden");
+  });
+
+  closeHelpBtn.addEventListener("click", () => {
+    helpModal.classList.add("hidden");
+  });
+
+  gotItBtn.addEventListener("click", () => {
+    helpModal.classList.add("hidden");
   });
 });
