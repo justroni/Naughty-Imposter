@@ -47,6 +47,7 @@
       border: 3px solid #000;
       text-align: center;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+      position: relative;
     }
 
     .title-banner span {
@@ -56,6 +57,28 @@
       letter-spacing: 1.5px;
       text-shadow: 2px 2px 0px #000;
       text-transform: uppercase;
+    }
+
+    /* Back Button Header Style */
+    .header-back-btn {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #ff4141;
+      color: #fff;
+      border: 2px solid #000;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0px 2px 0px #000;
+    }
+
+    .header-back-btn:active {
+      transform: translateY(-50%) translateY(2px);
+      box-shadow: none;
     }
 
     .button-list {
@@ -151,9 +174,8 @@
       color: #fff;
       border: 2px solid #000;
       border-radius: 8px;
-      width: 32px;
-      height: 32px;
-      font-size: 16px;
+      padding: 4px 10px;
+      font-size: 14px;
       cursor: pointer;
       font-weight: 800;
     }
@@ -325,6 +347,7 @@
     <!-- SCREEN 2: PASS THE PHONE / SECRET REVEAL -->
     <div class="screen hidden" id="revealScreen">
       <div class="title-banner">
+        <button class="header-back-btn backToMenuBtn">⬅ BACK</button>
         <span>PASS THE PHONE</span>
       </div>
 
@@ -348,6 +371,7 @@
     <!-- SCREEN 3: DISCUSSION & VOTING -->
     <div class="screen hidden" id="votingScreen">
       <div class="title-banner">
+        <button class="header-back-btn backToMenuBtn">⬅ BACK</button>
         <span>VOTING TIME</span>
       </div>
 
@@ -371,7 +395,7 @@
     <div class="modal-card">
       <div class="modal-header">
         <h2>💀 GAME SETUP</h2>
-        <button class="close-btn" id="closeSetupBtn">✖</button>
+        <button class="close-btn" id="closeSetupBtn">⬅ BACK</button>
       </div>
 
       <div class="form-group">
@@ -406,7 +430,7 @@
     <div class="modal-card">
       <div class="modal-header">
         <h2>📖 HOW TO PLAY</h2>
-        <button class="close-btn" id="closeHelpBtn">✖</button>
+        <button class="close-btn" id="closeHelpBtn">⬅ BACK</button>
       </div>
 
       <div class="rules-content">
@@ -437,7 +461,7 @@
     <div class="modal-card">
       <div class="modal-header">
         <h2>⚙️ SETTINGS</h2>
-        <button class="close-btn" id="closeSettingsBtn">✖</button>
+        <button class="close-btn" id="closeSettingsBtn">⬅ BACK</button>
       </div>
 
       <div class="toggle-row">
@@ -498,6 +522,15 @@
         document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
         document.getElementById(screenId).classList.remove("hidden");
       }
+
+      // GLOBAL BACK TO MAIN MENU ACTION
+      document.querySelectorAll(".backToMenuBtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (confirm("Are you sure you want to go back to the Main Menu? Current round progress will be lost.")) {
+            showScreen("menuScreen");
+          }
+        });
+      });
 
       // MODAL CONTROLS
       const setupModal = (btnId, modalId, closeId) => {
