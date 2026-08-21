@@ -5,17 +5,274 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Naughty Imposter</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=5" />
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+
+    body, html {
+      width: 100%;
+      min-height: 100vh;
+      background-color: #ffca28;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 16px 12px;
+    }
+
+    .menu-container {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .title-banner {
+      background: #1e130e;
+      padding: 12px 10px;
+      border-radius: 12px;
+      border: 3px solid #000;
+      text-align: center;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .title-banner span {
+      color: #ffca28;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-shadow: 2px 2px 0px #000;
+      text-transform: uppercase;
+    }
+
+    .button-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 2px solid #000000;
+      border-radius: 12px;
+      cursor: pointer;
+      text-shadow: 1px 1px 0px #000;
+      box-shadow: inset 0px 2px 0px rgba(255, 255, 255, 0.4), 0px 4px 0px #000;
+      transition: transform 0.1s ease;
+    }
+
+    .btn:active {
+      transform: translateY(2px);
+      box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.4), 0px 2px 0px #000;
+    }
+
+    .btn-play { background: linear-gradient(180deg, #ff4141 0%, #c41818 100%); }
+    .btn-host { background: linear-gradient(180deg, #3db2ff 0%, #1072d6 100%); }
+    .btn-join { background: linear-gradient(180deg, #33cc66 0%, #1e833e 100%); }
+    .btn-help { background: linear-gradient(180deg, #ab47bc 0%, #6a1b9a 100%); }
+    .btn-settings { background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%); }
+
+    .banner-container {
+      width: 100%;
+      margin-top: 4px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 3px solid #000;
+      box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+    }
+
+    .banner-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Modal Popup Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 380px;
+      background: #1e130e;
+      border: 3px solid #ffca28;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #ffca28;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .close-btn {
+      background: #ff4141;
+      color: #fff;
+      border: 2px solid #000;
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      color: #ddd;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 2px solid #000;
+      font-size: 15px;
+      font-weight: 700;
+      outline: none;
+      background: #fff;
+      color: #111;
+    }
+
+    .code-box {
+      text-align: center;
+      letter-spacing: 4px;
+      font-size: 20px !important;
+      font-weight: 800 !important;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .half {
+      flex: 1;
+    }
+
+    /* Rules Formatting */
+    .rules-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #120b08;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #3d2518;
+    }
+
+    .rule-num {
+      background: #ffca28;
+      color: #000;
+      font-weight: 800;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .rule-item p {
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .rule-item strong { color: #fff; }
+    .rule-item em { color: #ff4141; font-style: normal; font-weight: bold; }
+
+    /* Settings Formatting */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #120b08;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #3d2518;
+    }
+
+    .toggle-row span {
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .toggle-btn {
+      width: 60px;
+      padding: 6px 0;
+      border-radius: 8px;
+      border: 2px solid #000;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .toggle-on { background: #44d64a; color: #fff; }
+    .toggle-off { background: #ff4141; color: #fff; }
+  </style>
 </head>
 <body>
+
   <div class="menu-container">
-    
-    <!-- Top Header Banner -->
     <div class="title-banner">
       <span>LETS GET NAUGHTY</span>
     </div>
 
-    <!-- Main Menu Buttons -->
     <div class="button-list">
       <button class="btn btn-play" id="playBtn">💀 PLAY NOW 💀</button>
       <button class="btn btn-host" id="hostBtn">HOST LOBBY</button>
@@ -24,14 +281,12 @@
       <button class="btn btn-settings" id="settingsBtn">SETTINGS</button>
     </div>
 
-    <!-- Artwork Banner -->
-    <div class="banner-container">
+    <div class="banner-container" id="pigBanner">
       <img src="menu-bg.jpg" alt="The Naughty Imposter" class="banner-img" />
     </div>
-
   </div>
 
-  <!-- Host Setup Modal -->
+  <!-- HOST LOBBY MODAL -->
   <div class="modal-overlay hidden" id="hostModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -63,9 +318,7 @@
 
         <div class="form-group half">
           <label>Imposters</label>
-          <select id="impostersSelect">
-            <!-- Dynamically populated -->
-          </select>
+          <select id="impostersSelect"></select>
         </div>
       </div>
 
@@ -73,7 +326,7 @@
     </div>
   </div>
 
-  <!-- Join Room Modal -->
+  <!-- JOIN ROOM MODAL -->
   <div class="modal-overlay hidden" id="joinModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -88,14 +341,14 @@
 
       <div class="form-group">
         <label>Room Code (4 Digits)</label>
-        <input type="number" id="roomCodeInput" placeholder="e.g. 4829" pattern="[0-9]*" oninput="if(this.value.length > 4) this.value = this.value.slice(0,4);" class="code-box" />
+        <input type="number" id="roomCodeInput" placeholder="e.g. 4829" class="code-box" oninput="if(this.value.length > 4) this.value = this.value.slice(0,4);" />
       </div>
 
       <button class="btn btn-join" id="enterRoomBtn">ENTER LOBBY 🎮</button>
     </div>
   </div>
 
-  <!-- How To Play Modal -->
+  <!-- HOW TO PLAY MODAL -->
   <div class="modal-overlay hidden" id="helpModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -108,17 +361,14 @@
           <span class="rule-num">1</span>
           <p><strong>Secret Word:</strong> Everyone gets the secret word except the <em>Naughty Imposter</em>!</p>
         </div>
-
         <div class="rule-item">
           <span class="rule-num">2</span>
-          <p><strong>Give Clues:</strong> Take turns saying a one-word clue about the secret item.</p>
+          <p><strong>Give Clues:</strong> Take turns giving a one-word clue about the secret item.</p>
         </div>
-
         <div class="rule-item">
           <span class="rule-num">3</span>
           <p><strong>Bluffing:</strong> The Imposter doesn't know the word and must fake it to blend in.</p>
         </div>
-
         <div class="rule-item">
           <span class="rule-num">4</span>
           <p><strong>Vote & Win:</strong> Discuss and vote out the suspect! Innocent players win if they catch the Imposter.</p>
@@ -129,6 +379,142 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- SETTINGS MODAL -->
+  <div class="modal-overlay hidden" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>⚙️ SETTINGS</h2>
+        <button class="close-btn" id="closeSettingsBtn">✖</button>
+      </div>
+
+      <div class="toggle-row">
+        <span>Fart Sound Effects</span>
+        <button class="toggle-btn toggle-on" id="soundToggleBtn">ON</button>
+      </div>
+
+      <button class="btn btn-settings" id="saveSettingsBtn">SAVE & CLOSE</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let soundEnabled = true;
+
+      // Fart Audio Synthesizer (Web Audio API)
+      function playFartSound() {
+        if (!soundEnabled) return;
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(110, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.4);
+          gain.gain.setValueAtTime(0.5, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.4);
+        } catch(e) {}
+      }
+
+      // Pig Image Click FX
+      document.getElementById("pigBanner").addEventListener("click", playFartSound);
+
+      // Modal Controls
+      const setupModal = (btnId, modalId, closeId) => {
+        const btn = document.getElementById(btnId);
+        const modal = document.getElementById(modalId);
+        const close = document.getElementById(closeId);
+        if (btn && modal) btn.addEventListener("click", () => modal.classList.remove("hidden"));
+        if (close && modal) close.addEventListener("click", () => modal.classList.add("hidden"));
+      };
+
+      setupModal("hostBtn", "hostModal", "closeHostBtn");
+      setupModal("joinBtn", "joinModal", "closeJoinBtn");
+      setupModal("helpBtn", "helpModal", "closeHelpBtn");
+      setupModal("settingsBtn", "settingsModal", "closeSettingsBtn");
+
+      document.getElementById("gotItBtn").addEventListener("click", () => {
+        document.getElementById("helpModal").classList.add("hidden");
+      });
+
+      // Host Dynamic Imposters
+      const playersInput = document.getElementById("playersInput");
+      const impostersSelect = document.getElementById("impostersSelect");
+
+      function updateImposterOptions() {
+        let count = parseInt(playersInput.value) || 3;
+        const currentSelected = impostersSelect.value;
+        impostersSelect.innerHTML = "";
+
+        let maxImposters = 1;
+        if (count >= 10) maxImposters = 3;
+        else if (count >= 6) maxImposters = 2;
+
+        for (let i = 1; i <= maxImposters; i++) {
+          const option = document.createElement("option");
+          option.value = i;
+          option.textContent = `${i} Imposter${i > 1 ? "s" : ""}`;
+          impostersSelect.appendChild(option);
+        }
+
+        if (currentSelected && currentSelected <= maxImposters) {
+          impostersSelect.value = currentSelected;
+        }
+      }
+
+      document.getElementById("hostBtn").addEventListener("click", updateImposterOptions);
+      playersInput.addEventListener("input", updateImposterOptions);
+      playersInput.addEventListener("blur", () => {
+        let val = parseInt(playersInput.value) || 3;
+        if (val < 3) playersInput.value = 3;
+        if (val > 15) playersInput.value = 15;
+        updateImposterOptions();
+      });
+
+      // Actions
+      document.getElementById("createLobbyBtn").addEventListener("click", () => {
+        let playerCount = parseInt(playersInput.value) || 3;
+        if (playerCount < 3) playerCount = 3;
+        if (playerCount > 15) playerCount = 15;
+        const hostName = document.getElementById("hostNameInput").value.trim() || "Host Pig";
+        const category = document.getElementById("categorySelect").value;
+        const imposters = impostersSelect.value;
+        const roomCode = Math.floor(1000 + Math.random() * 9000);
+
+        alert(`🎉 Lobby Created!\n\nRoom Code: ${roomCode}\nHost: ${hostName}\nCategory: ${category.toUpperCase()}\nPlayers: ${playerCount}\nImposters: ${imposters}`);
+        document.getElementById("hostModal").classList.add("hidden");
+      });
+
+      document.getElementById("enterRoomBtn").addEventListener("click", () => {
+        const playerName = document.getElementById("joinNameInput").value.trim() || "Naughty Pig";
+        const roomCode = document.getElementById("roomCodeInput").value.trim();
+        if (roomCode.length !== 4) {
+          alert("⚠️ Please enter a valid 4-digit room code.");
+          return;
+        }
+        alert(`🎮 Joining Lobby!\n\nPlayer: ${playerName}\nRoom Code: ${roomCode}`);
+        document.getElementById("joinModal").classList.add("hidden");
+      });
+
+      document.getElementById("playBtn").addEventListener("click", () => {
+        document.getElementById("hostBtn").click();
+      });
+
+      // Settings Sound Toggle
+      const soundToggleBtn = document.getElementById("soundToggleBtn");
+      soundToggleBtn.addEventListener("click", () => {
+        soundEnabled = !soundEnabled;
+        soundToggleBtn.textContent = soundEnabled ? "ON" : "OFF";
+        soundToggleBtn.className = soundEnabled ? "toggle-btn toggle-on" : "toggle-btn toggle-off";
+      });
+
+      document.getElementById("saveSettingsBtn").addEventListener("click", () => {
+        document.getElementById("settingsModal").classList.add("hidden");
+      });
+    });
+  </script>
 </body>
 </html>
