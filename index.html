@@ -1,11 +1,11 @@
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Naughty Imposter</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=3" />
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
   <div class="menu-container">
@@ -31,7 +31,7 @@
 
   </div>
 
-  <!-- Host Setup Modal Overlay -->
+  <!-- Host Setup Modal -->
   <div class="modal-overlay hidden" id="hostModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -70,6 +70,28 @@
       </div>
 
       <button class="btn btn-play" id="createLobbyBtn">CREATE ROOM 🚀</button>
+    </div>
+  </div>
+
+  <!-- Join Room Modal -->
+  <div class="modal-overlay hidden" id="joinModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🚪 JOIN ROOM</h2>
+        <button class="close-btn" id="closeJoinBtn">✖</button>
+      </div>
+
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="joinNameInput" placeholder="Enter Player Name" maxlength="12" value="Naughty Pig" />
+      </div>
+
+      <div class="form-group">
+        <label>Room Code (4 Digits)</label>
+        <input type="number" id="roomCodeInput" placeholder="e.g. 4829" pattern="[0-9]*" oninput="if(this.value.length > 4) this.value = this.value.slice(0,4);" class="code-box" />
+      </div>
+
+      <button class="btn btn-join" id="enterRoomBtn">ENTER LOBBY 🎮</button>
     </div>
   </div>
 
