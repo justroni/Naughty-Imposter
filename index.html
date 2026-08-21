@@ -25,12 +25,19 @@
       padding: 16px 12px;
     }
 
-    .menu-container {
+    .app-container {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+    }
+
+    .screen {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
     }
 
     .title-banner {
@@ -83,6 +90,7 @@
     .btn-join { background: linear-gradient(180deg, #33cc66 0%, #1e833e 100%); }
     .btn-help { background: linear-gradient(180deg, #ab47bc 0%, #6a1b9a 100%); }
     .btn-settings { background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%); }
+    .btn-secondary { background: linear-gradient(180deg, #f57c00 0%, #e65100 100%); }
 
     .banner-container {
       width: 100%;
@@ -100,7 +108,7 @@
       display: block;
     }
 
-    /* Modal Popup Styles */
+    /* Modals & Overlays */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -115,9 +123,7 @@
       z-index: 100;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     .modal-card {
       width: 100%;
@@ -139,10 +145,7 @@
       color: #ffca28;
     }
 
-    .modal-header h2 {
-      font-size: 20px;
-      font-weight: 800;
-    }
+    .modal-header h2 { font-size: 20px; font-weight: 800; }
 
     .close-btn {
       background: #ff4141;
@@ -156,18 +159,8 @@
       font-weight: 800;
     }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-group label {
-      color: #ddd;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { color: #ddd; font-size: 13px; font-weight: 700; }
     .form-group input, .form-group select {
       width: 100%;
       padding: 10px;
@@ -187,22 +180,11 @@
       font-weight: 800 !important;
     }
 
-    .form-row {
-      display: flex;
-      gap: 10px;
-    }
+    .form-row { display: flex; gap: 10px; }
+    .half { flex: 1; }
 
-    .half {
-      flex: 1;
-    }
-
-    /* Rules Formatting */
-    .rules-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
+    /* Rules & Settings */
+    .rules-content { display: flex; flex-direction: column; gap: 10px; }
     .rule-item {
       display: flex;
       align-items: flex-start;
@@ -212,7 +194,6 @@
       border-radius: 10px;
       border: 1px solid #3d2518;
     }
-
     .rule-num {
       background: #ffca28;
       color: #000;
@@ -226,17 +207,10 @@
       font-size: 14px;
       flex-shrink: 0;
     }
-
-    .rule-item p {
-      color: #ccc;
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
+    .rule-item p { color: #ccc; font-size: 13px; line-height: 1.4; }
     .rule-item strong { color: #fff; }
     .rule-item em { color: #ff4141; font-style: normal; font-weight: bold; }
 
-    /* Settings Formatting */
     .toggle-row {
       display: flex;
       justify-content: space-between;
@@ -246,13 +220,7 @@
       border-radius: 10px;
       border: 1px solid #3d2518;
     }
-
-    .toggle-row span {
-      color: #fff;
-      font-weight: 700;
-      font-size: 15px;
-    }
-
+    .toggle-row span { color: #fff; font-weight: 700; font-size: 15px; }
     .toggle-btn {
       width: 60px;
       padding: 6px 0;
@@ -261,32 +229,187 @@
       font-weight: 800;
       cursor: pointer;
     }
-
     .toggle-on { background: #44d64a; color: #fff; }
     .toggle-off { background: #ff4141; color: #fff; }
+
+    /* Lobby & Game Cards */
+    .game-card {
+      background: #1e130e;
+      border: 3px solid #ffca28;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .room-header-box {
+      background: #120b08;
+      border: 2px solid #3d2518;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .room-code-tag {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffca28;
+      letter-spacing: 3px;
+    }
+
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .player-badge {
+      background: #2a1a13;
+      border: 2px solid #3d2518;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .player-badge.host { border-color: #ffca28; }
+    .badge-icon { font-size: 16px; }
+
+    /* Secret Card Reveal */
+    .secret-box {
+      background: #120b08;
+      border: 3px dashed #ffca28;
+      border-radius: 14px;
+      padding: 24px 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .secret-title { font-size: 14px; color: #aaa; text-transform: uppercase; font-weight: 800; }
+    .secret-word { font-size: 26px; font-weight: 800; color: #ffca28; }
+    .secret-imposter { color: #ff4141 !important; font-size: 22px; }
+
+    /* Voting Grid */
+    .vote-list { display: flex; flex-direction: column; gap: 8px; }
+    .vote-btn {
+      background: #2a1a13;
+      border: 2px solid #3d2518;
+      padding: 12px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .vote-btn.selected {
+      border-color: #ff4141;
+      background: #3e1212;
+    }
   </style>
 </head>
 <body>
 
-  <div class="menu-container">
-    <div class="title-banner">
-      <span>LETS GET NAUGHTY</span>
+  <div class="app-container">
+
+    <!-- SCREEN 1: MAIN MENU -->
+    <div class="screen" id="menuScreen">
+      <div class="title-banner">
+        <span>LETS GET NAUGHTY</span>
+      </div>
+
+      <div class="button-list">
+        <button class="btn btn-play" id="playBtn">💀 PLAY NOW 💀</button>
+        <button class="btn btn-host" id="hostBtn">HOST LOBBY</button>
+        <button class="btn btn-join" id="joinBtn">JOIN ROOM</button>
+        <button class="btn btn-help" id="helpBtn">HOW TO PLAY</button>
+        <button class="btn btn-settings" id="settingsBtn">SETTINGS</button>
+      </div>
+
+      <div class="banner-container" id="pigBanner">
+        <img src="menu-bg.jpg" alt="The Naughty Imposter" class="banner-img" />
+      </div>
     </div>
 
-    <div class="button-list">
-      <button class="btn btn-play" id="playBtn">💀 PLAY NOW 💀</button>
-      <button class="btn btn-host" id="hostBtn">HOST LOBBY</button>
-      <button class="btn btn-join" id="joinBtn">JOIN ROOM</button>
-      <button class="btn btn-help" id="helpBtn">HOW TO PLAY</button>
-      <button class="btn btn-settings" id="settingsBtn">SETTINGS</button>
+    <!-- SCREEN 2: WAITING LOBBY -->
+    <div class="screen hidden" id="lobbyScreen">
+      <div class="title-banner">
+        <span>LOBBY ROOM</span>
+      </div>
+
+      <div class="game-card">
+        <div class="room-header-box">
+          <div style="font-size: 12px; color: #aaa; font-weight:700;">ROOM CODE</div>
+          <div class="room-code-tag" id="lobbyRoomCode">4829</div>
+          <div style="font-size: 13px; color: #ddd; margin-top: 4px;" id="lobbySettingsSummary">Category: Random | Imposters: 1</div>
+        </div>
+
+        <div style="font-size: 14px; font-weight: 800; color: #ffca28;">PLAYERS (<span id="playerCountCount">0</span>/<span id="playerCountMax">5</span>)</div>
+        <div class="player-grid" id="playerGrid"></div>
+
+        <button class="btn btn-play" id="startGameBtn">START GAME 🚀</button>
+        <button class="btn btn-settings" id="leaveLobbyBtn">LEAVE LOBBY</button>
+      </div>
     </div>
 
-    <div class="banner-container" id="pigBanner">
-      <img src="menu-bg.jpg" alt="The Naughty Imposter" class="banner-img" />
+    <!-- SCREEN 3: PASS THE PHONE / SECRET REVEAL -->
+    <div class="screen hidden" id="revealScreen">
+      <div class="title-banner">
+        <span>SECRET ROLE</span>
+      </div>
+
+      <div class="game-card">
+        <div class="room-header-box">
+          <div style="font-size: 14px; color: #aaa; font-weight:700;">PASS PHONE TO</div>
+          <div class="room-code-tag" id="revealPlayerName">PLAYER 1</div>
+        </div>
+
+        <div class="secret-box" id="secretBox">
+          <div class="secret-title" id="secretBoxTitle">TAP TO REVEAL</div>
+          <div class="secret-word" id="secretBoxContent">🙈 🙈 🙈</div>
+        </div>
+
+        <button class="btn btn-join hidden" id="nextPlayerBtn">NEXT PLAYER ➡️</button>
+        <button class="btn btn-play hidden" id="startDiscussionBtn">BEGIN GAME 💬</button>
+      </div>
     </div>
+
+    <!-- SCREEN 4: DISCUSSION & VOTING -->
+    <div class="screen hidden" id="votingScreen">
+      <div class="title-banner">
+        <span>VOTING TIME</span>
+      </div>
+
+      <div class="game-card">
+        <div class="room-header-box">
+          <div style="font-size: 13px; color: #aaa; font-weight:700;">SECRET CATEGORY</div>
+          <div style="font-size: 20px; font-weight:800; color:#ffca28;" id="activeCategoryTag">FOODS</div>
+        </div>
+
+        <div style="font-size: 14px; font-weight: 800; color: #fff;">VOTE OUT THE IMPOSTER:</div>
+        <div class="vote-list" id="voteList"></div>
+
+        <button class="btn btn-play" id="submitVoteBtn">SUBMIT VOTE 🗳️</button>
+      </div>
+    </div>
+
   </div>
 
-  <!-- HOST LOBBY MODAL -->
+  <!-- MODAL: HOST LOBBY -->
   <div class="modal-overlay hidden" id="hostModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -326,7 +449,7 @@
     </div>
   </div>
 
-  <!-- JOIN ROOM MODAL -->
+  <!-- MODAL: JOIN ROOM -->
   <div class="modal-overlay hidden" id="joinModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -348,7 +471,7 @@
     </div>
   </div>
 
-  <!-- HOW TO PLAY MODAL -->
+  <!-- MODAL: HOW TO PLAY -->
   <div class="modal-overlay hidden" id="helpModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -371,7 +494,7 @@
         </div>
         <div class="rule-item">
           <span class="rule-num">4</span>
-          <p><strong>Vote & Win:</strong> Discuss and vote out the suspect! Innocent players win if they catch the Imposter.</p>
+          <p><strong>Vote & Win:</strong> Discuss and vote out the suspect!</p>
         </div>
       </div>
 
@@ -379,7 +502,7 @@
     </div>
   </div>
 
-  <!-- SETTINGS MODAL -->
+  <!-- MODAL: SETTINGS -->
   <div class="modal-overlay hidden" id="settingsModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -398,11 +521,31 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      let soundEnabled = true;
+      // WORD DATABASE
+      const WORD_DATABASE = {
+        foods: ["PIZZA", "BURGER", "SUSHI", "TACO", "DONUT", "PANCAKES", "ICE CREAM", "HOT DOG", "FRIES", "PASTA"],
+        animals: ["LION", "PENGUIN", "ELEPHANT", "GIRAFFE", "SLOTH", "MONKEY", "DOLPHIN", "PANDA", "KANGAROO", "PIG"],
+        movies: ["TITANIC", "AVATAR", "INCEPTION", "FROZEN", "SHREK", "JURASSIC PARK", "BATMAN", "SPIDERMAN", "BARBIE"],
+        naughty: ["STINKY SOCK", "BURP BOMB", "BUTT CHEEKS", "TOILET PAPER", "FART CANNON", "SNOT ROCKET", "BANANA PEEL", "POOP EMOJI"]
+      };
 
-      // Fart Audio Synthesizer (Web Audio API)
+      // GAME STATE
+      let gameState = {
+        soundEnabled: true,
+        roomCode: "1234",
+        categoryKey: "random",
+        activeCategory: "",
+        secretWord: "",
+        targetPlayerCount: 5,
+        imposterCount: 1,
+        players: [], // { name, isHost, isImposter }
+        currentRevealIndex: 0,
+        selectedVoteTarget: null
+      };
+
+      // FART AUDIO SYNTHESIZER
       function playFartSound() {
-        if (!soundEnabled) return;
+        if (!gameState.soundEnabled) return;
         try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
           const osc = ctx.createOscillator();
@@ -419,10 +562,15 @@
         } catch(e) {}
       }
 
-      // Pig Image Click FX
       document.getElementById("pigBanner").addEventListener("click", playFartSound);
 
-      // Modal Controls
+      // SCREEN NAVIGATION
+      function showScreen(screenId) {
+        document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+        document.getElementById(screenId).classList.remove("hidden");
+      }
+
+      // MODALS SETUP
       const setupModal = (btnId, modalId, closeId) => {
         const btn = document.getElementById(btnId);
         const modal = document.getElementById(modalId);
@@ -435,12 +583,9 @@
       setupModal("joinBtn", "joinModal", "closeJoinBtn");
       setupModal("helpBtn", "helpModal", "closeHelpBtn");
       setupModal("settingsBtn", "settingsModal", "closeSettingsBtn");
+      document.getElementById("gotItBtn").addEventListener("click", () => document.getElementById("helpModal").classList.add("hidden"));
 
-      document.getElementById("gotItBtn").addEventListener("click", () => {
-        document.getElementById("helpModal").classList.add("hidden");
-      });
-
-      // Host Dynamic Imposters
+      // DYNAMIC IMPOSTERS DROPDOWN
       const playersInput = document.getElementById("playersInput");
       const impostersSelect = document.getElementById("impostersSelect");
 
@@ -467,48 +612,172 @@
 
       document.getElementById("hostBtn").addEventListener("click", updateImposterOptions);
       playersInput.addEventListener("input", updateImposterOptions);
-      playersInput.addEventListener("blur", () => {
-        let val = parseInt(playersInput.value) || 3;
-        if (val < 3) playersInput.value = 3;
-        if (val > 15) playersInput.value = 15;
-        updateImposterOptions();
-      });
 
-      // Actions
+      // CREATE LOBBY
       document.getElementById("createLobbyBtn").addEventListener("click", () => {
-        let playerCount = parseInt(playersInput.value) || 3;
-        if (playerCount < 3) playerCount = 3;
-        if (playerCount > 15) playerCount = 15;
         const hostName = document.getElementById("hostNameInput").value.trim() || "Host Pig";
-        const category = document.getElementById("categorySelect").value;
-        const imposters = impostersSelect.value;
-        const roomCode = Math.floor(1000 + Math.random() * 9000);
+        gameState.targetPlayerCount = parseInt(playersInput.value) || 5;
+        gameState.imposterCount = parseInt(impostersSelect.value) || 1;
+        gameState.categoryKey = document.getElementById("categorySelect").value;
+        gameState.roomCode = Math.floor(1000 + Math.random() * 9000).toString();
 
-        alert(`🎉 Lobby Created!\n\nRoom Code: ${roomCode}\nHost: ${hostName}\nCategory: ${category.toUpperCase()}\nPlayers: ${playerCount}\nImposters: ${imposters}`);
+        // Populate Players List
+        gameState.players = [{ name: hostName, isHost: true, isImposter: false }];
+        for (let i = 2; i <= gameState.targetPlayerCount; i++) {
+          gameState.players.push({ name: `Player ${i}`, isHost: false, isImposter: false });
+        }
+
+        // Render Lobby Screen
+        document.getElementById("lobbyRoomCode").textContent = gameState.roomCode;
+        document.getElementById("lobbySettingsSummary").textContent = `Category: ${gameState.categoryKey.toUpperCase()} | Imposters: ${gameState.imposterCount}`;
+        document.getElementById("playerCountCount").textContent = gameState.players.length;
+        document.getElementById("playerCountMax").textContent = gameState.targetPlayerCount;
+
+        const playerGrid = document.getElementById("playerGrid");
+        playerGrid.innerHTML = "";
+        gameState.players.forEach(p => {
+          const badge = document.createElement("div");
+          badge.className = `player-badge ${p.isHost ? "host" : ""}`;
+          badge.innerHTML = `<span class="badge-icon">${p.isHost ? "👑" : "🐷"}</span> <span>${p.name}</span>`;
+          playerGrid.appendChild(badge);
+        });
+
         document.getElementById("hostModal").classList.add("hidden");
+        showScreen("lobbyScreen");
       });
 
+      // LEAVE LOBBY
+      document.getElementById("leaveLobbyBtn").addEventListener("click", () => showScreen("menuScreen"));
+      document.getElementById("playBtn").addEventListener("click", () => document.getElementById("hostBtn").click());
+
+      // ENTER ROOM (JOIN)
       document.getElementById("enterRoomBtn").addEventListener("click", () => {
-        const playerName = document.getElementById("joinNameInput").value.trim() || "Naughty Pig";
         const roomCode = document.getElementById("roomCodeInput").value.trim();
         if (roomCode.length !== 4) {
-          alert("⚠️ Please enter a valid 4-digit room code.");
+          alert("⚠️ Enter a valid 4-digit room code.");
           return;
         }
-        alert(`🎮 Joining Lobby!\n\nPlayer: ${playerName}\nRoom Code: ${roomCode}`);
         document.getElementById("joinModal").classList.add("hidden");
+        alert("🎮 Joined successfully! Waiting for host to start...");
       });
 
-      document.getElementById("playBtn").addEventListener("click", () => {
-        document.getElementById("hostBtn").click();
+      // START GAME & ASSIGN ROLES
+      document.getElementById("startGameBtn").addEventListener("click", () => {
+        // Pick Category & Secret Word
+        let availableCategories = Object.keys(WORD_DATABASE);
+        if (gameState.categoryKey !== "random" && WORD_DATABASE[gameState.categoryKey]) {
+          gameState.activeCategory = gameState.categoryKey;
+        } else {
+          gameState.activeCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+        }
+
+        const categoryWords = WORD_DATABASE[gameState.activeCategory];
+        gameState.secretWord = categoryWords[Math.floor(Math.random() * categoryWords.length)];
+
+        // Assign Imposters randomly
+        gameState.players.forEach(p => p.isImposter = false);
+        let assigned = 0;
+        while (assigned < gameState.imposterCount) {
+          let randIdx = Math.floor(Math.random() * gameState.players.length);
+          if (!gameState.players[randIdx].isImposter) {
+            gameState.players[randIdx].isImposter = true;
+            assigned++;
+          }
+        }
+
+        // Start Pass the Phone reveal
+        gameState.currentRevealIndex = 0;
+        setupSecretRevealScreen();
+        showScreen("revealScreen");
       });
 
-      // Settings Sound Toggle
+      // REVEAL ROLE / PASS THE PHONE LOGIC
+      function setupSecretRevealScreen() {
+        const player = gameState.players[gameState.currentRevealIndex];
+        document.getElementById("revealPlayerName").textContent = player.name.toUpperCase();
+        document.getElementById("secretBoxTitle").textContent = "TAP TO REVEAL";
+        
+        const contentBox = document.getElementById("secretBoxContent");
+        contentBox.textContent = "🙈 🙈 🙈";
+        contentBox.className = "secret-word";
+
+        document.getElementById("nextPlayerBtn").classList.add("hidden");
+        document.getElementById("startDiscussionBtn").classList.add("hidden");
+      }
+
+      document.getElementById("secretBox").addEventListener("click", () => {
+        const player = gameState.players[gameState.currentRevealIndex];
+        const contentBox = document.getElementById("secretBoxContent");
+        const titleBox = document.getElementById("secretBoxTitle");
+
+        if (player.isImposter) {
+          titleBox.textContent = "YOUR ROLE:";
+          contentBox.textContent = "😈 YOU ARE THE IMPOSTER!";
+          contentBox.className = "secret-word secret-imposter";
+        } else {
+          titleBox.textContent = `CATEGORY: ${gameState.activeCategory.toUpperCase()}`;
+          contentBox.textContent = gameState.secretWord;
+          contentBox.className = "secret-word";
+        }
+
+        if (gameState.currentRevealIndex < gameState.players.length - 1) {
+          document.getElementById("nextPlayerBtn").classList.remove("hidden");
+        } else {
+          document.getElementById("startDiscussionBtn").classList.remove("hidden");
+        }
+      });
+
+      document.getElementById("nextPlayerBtn").addEventListener("click", () => {
+        gameState.currentRevealIndex++;
+        setupSecretRevealScreen();
+      });
+
+      // START VOTING SCREEN
+      document.getElementById("startDiscussionBtn").addEventListener("click", () => {
+        document.getElementById("activeCategoryTag").textContent = gameState.activeCategory.toUpperCase();
+        const voteList = document.getElementById("voteList");
+        voteList.innerHTML = "";
+        gameState.selectedVoteTarget = null;
+
+        gameState.players.forEach((p, idx) => {
+          const voteBtn = document.createElement("button");
+          voteBtn.className = "vote-btn";
+          voteBtn.innerHTML = `<span>🐷 ${p.name}</span> <span>⭕</span>`;
+          voteBtn.addEventListener("click", () => {
+            document.querySelectorAll(".vote-btn").forEach(b => b.classList.remove("selected"));
+            voteBtn.classList.add("selected");
+            gameState.selectedVoteTarget = p;
+          });
+          voteList.appendChild(voteBtn);
+        });
+
+        showScreen("votingScreen");
+      });
+
+      // SUBMIT VOTE & RESULTS
+      document.getElementById("submitVoteBtn").addEventListener("click", () => {
+        if (!gameState.selectedVoteTarget) {
+          alert("⚠️ Tap on a player to vote them out!");
+          return;
+        }
+
+        const accused = gameState.selectedVoteTarget;
+        if (accused.isImposter) {
+          alert(`🎉 INNOCENTS WIN!\n\n${accused.name} WAS THE IMPOSTER! 😈\n\nThe secret word was: ${gameState.secretWord}`);
+        } else {
+          const imposters = gameState.players.filter(p => p.isImposter).map(p => p.name).join(", ");
+          alert(`💀 IMPOSTERS WIN!\n\n${accused.name} was INNOCENT!\n\nThe real imposter(s): ${imposters}\nSecret word was: ${gameState.secretWord}`);
+        }
+
+        showScreen("menuScreen");
+      });
+
+      // SETTINGS SOUND TOGGLE
       const soundToggleBtn = document.getElementById("soundToggleBtn");
       soundToggleBtn.addEventListener("click", () => {
-        soundEnabled = !soundEnabled;
-        soundToggleBtn.textContent = soundEnabled ? "ON" : "OFF";
-        soundToggleBtn.className = soundEnabled ? "toggle-btn toggle-on" : "toggle-btn toggle-off";
+        gameState.soundEnabled = !gameState.soundEnabled;
+        soundToggleBtn.textContent = gameState.soundEnabled ? "ON" : "OFF";
+        soundToggleBtn.className = gameState.soundEnabled ? "toggle-btn toggle-on" : "toggle-btn toggle-off";
       });
 
       document.getElementById("saveSettingsBtn").addEventListener("click", () => {
