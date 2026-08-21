@@ -8,7 +8,6 @@
 body, html {
   width: 100%;
   min-height: 100vh;
-  /* VIBRANT YELLOW BACKGROUND */
   background-color: #ffca28;
   color: #fff;
   display: flex;
@@ -25,7 +24,6 @@ body, html {
   gap: 12px;
 }
 
-/* Header Banner */
 .title-banner {
   background: #1e130e;
   padding: 12px 10px;
@@ -44,7 +42,6 @@ body, html {
   text-transform: uppercase;
 }
 
-/* Button Stack */
 .button-list {
   display: flex;
   flex-direction: column;
@@ -78,7 +75,6 @@ body, html {
 .btn-help { background: linear-gradient(180deg, #ab47bc 0%, #6a1b9a 100%); }
 .btn-settings { background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%); }
 
-/* Bottom Artwork Frame */
 .banner-container {
   width: 100%;
   margin-top: 4px;
@@ -92,4 +88,93 @@ body, html {
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* Modal Popup Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 100;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 380px;
+  background: #1e130e;
+  border: 3px solid #ffca28;
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.8);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffca28;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.close-btn {
+  background: #ff4141;
+  color: #fff;
+  border: 2px solid #000;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  color: #ddd;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #000;
+  font-size: 15px;
+  font-weight: 700;
+  outline: none;
+  background: #fff;
+  color: #111;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.half {
+  flex: 1;
 }
