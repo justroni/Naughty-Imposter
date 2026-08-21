@@ -388,9 +388,7 @@
         </div>
 
         <div style="font-size: 14px; font-weight: 800; color: #fff;">PLAYERS IN LOBBY (<span id="hostPlayerCount">1</span>):</div>
-        <div class="lobby-players-list" id="hostPlayersListContainer">
-          <!-- Joined players will appear here -->
-        </div>
+        <div class="lobby-players-list" id="hostPlayersListContainer"></div>
 
         <button class="btn btn-play" id="hostStartGameBtn">START ONLINE GAME 🚀</button>
       </div>
@@ -412,9 +410,7 @@
         </div>
 
         <div style="font-size: 14px; font-weight: 800; color: #fff;">PLAYERS JOINED:</div>
-        <div class="lobby-players-list" id="guestPlayersListContainer">
-          <!-- Joined players will appear here -->
-        </div>
+        <div class="lobby-players-list" id="guestPlayersListContainer"></div>
 
         <div style="text-align: center; font-size: 13px; color: #aaa; font-weight: 700; padding: 4px;">
           ⏳ Waiting for host to start the game...
@@ -424,7 +420,7 @@
       <button class="btn btn-back backToMenuBtn">⬅ LEAVE ROOM</button>
     </div>
 
-    <!-- SCREEN 4: PASS THE PHONE / SECRET REVEAL -->
+    <!-- SCREEN 4: SECRET REVEAL -->
     <div class="screen hidden" id="revealScreen">
       <div class="title-banner">
         <span>SECRET ROLE</span>
@@ -472,7 +468,7 @@
 
   </div>
 
-  <!-- MODAL: PLAY NOW SETUP (OFFLINE / 1 PHONE) -->
+  <!-- MODAL: PLAY NOW SETUP (OFFLINE) -->
   <div class="modal-overlay hidden" id="playSetupModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -507,7 +503,7 @@
     </div>
   </div>
 
-  <!-- MODAL: MULTIPLAYER MENU (CREATE / JOIN) -->
+  <!-- MODAL: MULTIPLAYER MENU -->
   <div class="modal-overlay hidden" id="multiplayerModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -626,7 +622,6 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // WORD DATABASE
       const WORD_DATABASE = {
         foods: ["PIZZA", "BURGER", "SUSHI", "TACO", "DONUT", "PANCAKES", "ICE CREAM", "HOT DOG", "FRIES", "PASTA"],
         animals: ["LION", "PENGUIN", "ELEPHANT", "GIRAFFE", "SLOTH", "MONKEY", "DOLPHIN", "PANDA", "KANGAROO", "PIG"],
@@ -634,7 +629,6 @@
         naughty: ["STINKY SOCK", "BURP BOMB", "BUTT CHEEKS", "TOILET PAPER", "FART CANNON", "SNOT ROCKET", "BANANA PEEL", "POOP EMOJI"]
       };
 
-      // GAME STATE
       let gameState = {
         soundEnabled: true,
         categoryKey: "random",
@@ -650,7 +644,6 @@
         myNickname: ""
       };
 
-      // AUDIO SYNTHESIZER
       function playFartSound() {
         if (!gameState.soundEnabled) return;
         try {
@@ -671,22 +664,19 @@
 
       document.getElementById("pigBanner").addEventListener("click", playFartSound);
 
-      // SCREEN NAVIGATION
       function showScreen(screenId) {
         document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
         document.getElementById(screenId).classList.remove("hidden");
       }
 
-      // BACK BUTTON EVENT LISTENER
       document.querySelectorAll(".backToMenuBtn").forEach(btn => {
         btn.addEventListener("click", () => {
-          if (confirm("Are you sure you want to exit to the Main Menu? Current game progress will be lost.")) {
+          if (confirm("Are you sure you want to exit to the Main Menu? Current progress will be lost.")) {
             showScreen("menuScreen");
           }
         });
       });
 
-      // MODAL CONTROLS
       const setupModal = (btnId, modalId, closeId) => {
         const btn = document.getElementById(btnId);
         const modal = document.getElementById(modalId);
@@ -701,7 +691,6 @@
       setupModal("settingsBtn", "settingsModal", "closeSettingsBtn");
       document.getElementById("gotItBtn").addEventListener("click", () => document.getElementById("helpModal").classList.add("hidden"));
 
-      // MULTIPLAYER MODAL FLOW
       const multiplayerModal = document.getElementById("multiplayerModal");
       const createRoomModal = document.getElementById("createRoomModal");
       const joinRoomModal = document.getElementById("joinRoomModal");
@@ -710,21 +699,47 @@
         multiplayerModal.classList.add("hidden");
         createRoomModal.classList.remove("hidden");
       });
-
-      document.getElementById("closeCreateModalBtn").addEventListener("click", () => {
-        createRoomModal.classList.add("hidden");
-      });
+      document.getElementById("closeCreateModalBtn").addEventListener("click", () => createRoomModal.classList.add("hidden"));
 
       document.getElementById("openJoinRoomModalBtn").addEventListener("click", () => {
         multiplayerModal.classList.add("hidden");
         joinRoomModal.classList.remove("hidden");
       });
+      document.getElementById("closeJoinBtn").addEventListener("click", () => joinRoomModal.classList.add("hidden"));
 
-      document.getElementById("closeJoinBtn").addEventListener("click", () => {
-        joinRoomModal.classList.add("hidden");
-      });
+      // FIREBASE ROOM LISTENER SYNC
+      function listenToRoom(code) {
+        const { db, ref, onValue } = window.dbModule;
+        
+        // Listen to player joins
+        const playersRef = ref(db, 'rooms/' + code + '/players');
+        onValue(playersRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            gameState.players = Object.values(data).map(p => ({ name: p.name, isImposter: p.isImposter || false }));
+            updateLobbyUI();
+          }
+        });
 
-      // CREATE ROOM LOGIC
+        // Listen to game start trigger for guests
+        const roomRef = ref(db, 'rooms/' + code);
+        onValue(roomRef, (snapshot) => {
+          const roomData = snapshot.val();
+          if (roomData && roomData.status === 'playing' && !gameState.isHost) {
+            gameState.activeCategory = roomData.category;
+            gameState.secretWord = roomData.secretWord;
+            // Find my role from players
+            const me = gameState.players.find(p => p.name === gameState.myNickname);
+            if (me && roomData.imposters && roomData.imposters.includes(me.name)) {
+              me.isImposter = true;
+            }
+            showScreen('revealScreen');
+            setupSecretRevealStep();
+          }
+        });
+      }
+
+      // CREATE ROOM FIREBASE
       document.getElementById("confirmCreateRoomBtn").addEventListener("click", () => {
         const hostName = document.getElementById("hostNameInput").value.trim() || "Host";
         gameState.isHost = true;
@@ -732,16 +747,26 @@
         gameState.roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
         gameState.categoryKey = document.getElementById("onlineCategorySelect").value;
 
-        gameState.players = [{ name: hostName, isImposter: false }];
+        const { db, ref, set } = window.dbModule;
+        const roomRef = ref(db, 'rooms/' + gameState.roomCode);
 
-        document.getElementById("hostRoomCodeText").textContent = gameState.roomCode;
-        updateLobbyUI();
-
-        createRoomModal.classList.add("hidden");
-        showScreen("hostLobbyScreen");
+        set(roomRef, {
+          status: 'lobby',
+          category: gameState.categoryKey,
+          players: {
+            [hostName]: { name: hostName, isHost: true }
+          }
+        }).then(() => {
+          document.getElementById("hostRoomCodeText").textContent = gameState.roomCode;
+          listenToRoom(gameState.roomCode);
+          createRoomModal.classList.add("hidden");
+          showScreen("hostLobbyScreen");
+        }).catch(err => {
+          alert("Error creating room: " + err.message);
+        });
       });
 
-      // JOIN ROOM LOGIC
+      // JOIN ROOM FIREBASE
       document.getElementById("connectRoomBtn").addEventListener("click", () => {
         const name = document.getElementById("joinPlayerName").value.trim();
         const code = document.getElementById("roomCodeInput").value.trim().toUpperCase();
@@ -751,66 +776,104 @@
           return;
         }
 
-        gameState.isHost = false;
-        gameState.myNickname = name;
-        gameState.roomCode = code;
+        const { db, ref, get, set } = window.dbModule;
+        const roomRef = ref(db, 'rooms/' + code);
 
-        // Mocking joined players for UI display
-        gameState.players = [
-          { name: "HostPlayer", isImposter: false },
-          { name: name, isImposter: false }
-        ];
+        get(roomRef).then((snapshot) => {
+          if (snapshot.exists()) {
+            const roomData = snapshot.val();
+            if (roomData.status !== 'lobby') {
+              alert("⚠️ This game has already started!");
+              return;
+            }
 
-        document.getElementById("guestRoomCodeText").textContent = code;
-        document.getElementById("guestDisplayName").textContent = name;
-        updateLobbyUI();
+            gameState.isHost = false;
+            gameState.myNickname = name;
+            gameState.roomCode = code;
 
-        joinRoomModal.classList.add("hidden");
-        showScreen("guestLobbyScreen");
+            // Add player to room database
+            const playerRef = ref(db, 'rooms/' + code + '/players/' + name);
+            set(playerRef, { name: name, isHost: false }).then(() => {
+              document.getElementById("guestRoomCodeText").textContent = code;
+              document.getElementById("guestDisplayName").textContent = name;
+              listenToRoom(code);
+              joinRoomModal.classList.add("hidden");
+              showScreen("guestLobbyScreen");
+            });
+          } else {
+            alert("⚠️ Room not found! Check your code.");
+          }
+        });
       });
 
-      // UPDATE LOBBY PLAYER LISTS INTERFACE
       function updateLobbyUI() {
         // Host view
         const hostList = document.getElementById("hostPlayersListContainer");
-        hostList.innerHTML = "";
-        document.getElementById("hostPlayerCount").textContent = gameState.players.length;
-
-        gameState.players.forEach((p, idx) => {
-          const chip = document.createElement("div");
-          chip.className = "lobby-player-chip";
-          chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#ffca28;">${idx === 0 ? '👑 HOST' : 'READY'}</span>`;
-          hostList.appendChild(chip);
-        });
+        if (hostList) {
+          hostList.innerHTML = "";
+          document.getElementById("hostPlayerCount").textContent = gameState.players.length;
+          gameState.players.forEach((p, idx) => {
+            const chip = document.createElement("div");
+            chip.className = "lobby-player-chip";
+            chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#ffca28;">${idx === 0 ? '👑 HOST' : 'READY'}</span>`;
+            hostList.appendChild(chip);
+          });
+        }
 
         // Guest view
         const guestList = document.getElementById("guestPlayersListContainer");
-        guestList.innerHTML = "";
-        gameState.players.forEach((p) => {
-          const chip = document.createElement("div");
-          chip.className = "lobby-player-chip";
-          chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#44d64a;">CONNECTED</span>`;
-          guestList.appendChild(chip);
-        });
+        if (guestList) {
+          guestList.innerHTML = "";
+          gameState.players.forEach((p) => {
+            const chip = document.createElement("div");
+            chip.className = "lobby-player-chip";
+            chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#44d64a;">CONNECTED</span>`;
+            guestList.appendChild(chip);
+          });
+        }
       }
 
-      // HOST STARTS THE ONLINE MATCH
+      // HOST STARTS ONLINE GAME
       document.getElementById("hostStartGameBtn").addEventListener("click", () => {
-        if (gameState.players.length < 3) {
-          alert("⚠️ You need at least 3 players in the lobby to start!");
-          // For testing convenience, let's add dummy bots if under 3
-          while (gameState.players.length < 3) {
-            gameState.players.push({ name: `Bot ${gameState.players.length + 1}`, isImposter: false });
-          }
-          updateLobbyUI();
+        if (gameState.players.length < 1) {
+          alert("⚠️ Not enough players!");
+          return;
         }
 
-        gameState.imposterCount = gameState.players.length >= 6 ? 2 : 1;
-        startNewRound();
-        showScreen("revealScreen");
+        // Pick category and secret word
+        let availableCategories = Object.keys(WORD_DATABASE);
+        let activeCat = gameState.categoryKey;
+        if (activeCat === "random" || !WORD_DATABASE[activeCat]) {
+          activeCat = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+        }
+        const words = WORD_DATABASE[activeCat];
+        const secretWord = words[Math.floor(Math.random() * words.length)];
+
+        // Assign imposters
+        let impCount = gameState.players.length >= 6 ? 2 : 1;
+        let shuffled = [...gameState.players].sort(() => 0.5 - Math.random());
+        let imposters = shuffled.slice(0, impCount).map(p => p.name);
+
+        gameState.activeCategory = activeCat;
+        gameState.secretWord = secretWord;
+        gameState.players.forEach(p => {
+          if (imposters.includes(p.name)) p.isImposter = true;
+        });
+
+        // Update database so guests start too
+        const { db, ref, update } = window.dbModule;
+        update(ref(db, 'rooms/' + gameState.roomCode), {
+          status: 'playing',
+          category: activeCat,
+          secretWord: secretWord,
+          imposters: imposters
+        }).then(() => {
+          showScreen("revealScreen");
+          setupSecretRevealStep();
+        });
       });
 
-      // DYNAMIC IMPOSTERS DROPDOWN (OFFLINE MODE)
+      // OFFLINE MODE SETUP
       const playersInput = document.getElementById("playersInput");
       const impostersSelect = document.getElementById("impostersSelect");
 
@@ -818,27 +881,19 @@
         let count = parseInt(playersInput.value) || 3;
         const currentSelected = impostersSelect.value;
         impostersSelect.innerHTML = "";
-
-        let maxImposters = 1;
-        if (count >= 10) maxImposters = 3;
-        else if (count >= 6) maxImposters = 2;
-
+        let maxImposters = count >= 10 ? 3 : (count >= 6 ? 2 : 1);
         for (let i = 1; i <= maxImposters; i++) {
           const option = document.createElement("option");
           option.value = i;
           option.textContent = `${i} Imposter${i > 1 ? "s" : ""}`;
           impostersSelect.appendChild(option);
         }
-
-        if (currentSelected && currentSelected <= maxImposters) {
-          impostersSelect.value = currentSelected;
-        }
+        if (currentSelected && currentSelected <= maxImposters) impostersSelect.value = currentSelected;
       }
 
       document.getElementById("playNowBtn").addEventListener("click", updateImposterOptions);
       playersInput.addEventListener("input", updateImposterOptions);
 
-      // START OFFLINE GAME
       document.getElementById("startGameBtn").addEventListener("click", () => {
         gameState.targetPlayerCount = parseInt(playersInput.value) || 5;
         gameState.imposterCount = parseInt(impostersSelect.value) || 1;
@@ -849,20 +904,14 @@
           gameState.players.push({ name: `Player ${i}`, isImposter: false });
         }
 
-        startNewRound();
+        startOfflineRound();
         document.getElementById("playSetupModal").classList.add("hidden");
         showScreen("revealScreen");
       });
 
-      // SETUP NEW ROUND LOGIC
-      function startNewRound() {
+      function startOfflineRound() {
         let availableCategories = Object.keys(WORD_DATABASE);
-        if (gameState.categoryKey !== "random" && WORD_DATABASE[gameState.categoryKey]) {
-          gameState.activeCategory = gameState.categoryKey;
-        } else {
-          gameState.activeCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-        }
-
+        gameState.activeCategory = (gameState.categoryKey !== "random") ? gameState.categoryKey : availableCategories[Math.floor(Math.random() * availableCategories.length)];
         const categoryWords = WORD_DATABASE[gameState.activeCategory];
         gameState.secretWord = categoryWords[Math.floor(Math.random() * categoryWords.length)];
 
@@ -875,15 +924,12 @@
             assigned++;
           }
         }
-
         gameState.currentRevealIndex = 0;
         setupSecretRevealStep();
       }
 
-      // REVEAL ROLE STEP
       function setupSecretRevealStep() {
-        const player = gameState.players[gameState.currentRevealIndex];
-        
+        const player = gameState.players[gameState.currentRevealIndex] || gameState.players[0];
         document.getElementById("revealStepNum").textContent = gameState.currentRevealIndex + 1;
         document.getElementById("revealTotalNum").textContent = gameState.players.length;
         
@@ -891,7 +937,6 @@
         nameInput.value = player.name;
 
         document.getElementById("secretBoxTitle").textContent = "TAP TO REVEAL ROLE";
-        
         const contentBox = document.getElementById("secretBoxContent");
         contentBox.textContent = "🙈 🙈 🙈";
         contentBox.className = "secret-word";
@@ -902,7 +947,9 @@
 
       document.getElementById("revealPlayerNameInput").addEventListener("input", (e) => {
         const val = e.target.value.trim();
-        gameState.players[gameState.currentRevealIndex].name = val || `Player ${gameState.currentRevealIndex + 1}`;
+        if (gameState.players[gameState.currentRevealIndex]) {
+          gameState.players[gameState.currentRevealIndex].name = val || `Player ${gameState.currentRevealIndex + 1}`;
+        }
       });
 
       document.getElementById("secretBox").addEventListener("click", () => {
@@ -960,17 +1007,11 @@
         }
 
         const accused = gameState.selectedVoteTarget;
-        let outcomeMessage = "";
+        let outcomeMessage = accused.isImposter ? 
+          `🎉 INNOCENTS WIN!\n\n${accused.name} WAS THE IMPOSTER! 😈\n\nSecret word: ${gameState.secretWord}` : 
+          `💀 IMPOSTERS WIN!\n\n${accused.name} was INNOCENT!\nSecret word: ${gameState.secretWord}`;
 
-        if (accused.isImposter) {
-          outcomeMessage = `🎉 INNOCENTS WIN!\n\n${accused.name} WAS THE IMPOSTER! 😈\n\nThe secret word was: ${gameState.secretWord}`;
-        } else {
-          const imposters = gameState.players.filter(p => p.isImposter).map(p => p.name).join(", ");
-          outcomeMessage = `💀 IMPOSTERS WIN!\n\n${accused.name} was INNOCENT!\n\nThe real imposter(s): ${imposters}\nSecret word was: ${gameState.secretWord}`;
-        }
-
-        const playAgain = confirm(`${outcomeMessage}\n\nDo you want to return to the Main Menu?`);
-        if (playAgain) {
+        if (confirm(`${outcomeMessage}\n\nReturn to Main Menu?`)) {
           showScreen("menuScreen");
         }
       });
