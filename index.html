@@ -47,7 +47,6 @@
       border: 3px solid #000;
       text-align: center;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
-      position: relative;
     }
 
     .title-banner span {
@@ -57,28 +56,6 @@
       letter-spacing: 1.5px;
       text-shadow: 2px 2px 0px #000;
       text-transform: uppercase;
-    }
-
-    /* Back Button Header Style */
-    .header-back-btn {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: #ff4141;
-      color: #fff;
-      border: 2px solid #000;
-      border-radius: 8px;
-      padding: 4px 10px;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0px 2px 0px #000;
-    }
-
-    .header-back-btn:active {
-      transform: translateY(-50%) translateY(2px);
-      box-shadow: none;
     }
 
     .button-list {
@@ -113,6 +90,7 @@
     .btn-help { background: linear-gradient(180deg, #ab47bc 0%, #6a1b9a 100%); }
     .btn-settings { background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%); }
     .btn-secondary { background: linear-gradient(180deg, #33cc66 0%, #1e833e 100%); }
+    .btn-back { background: linear-gradient(180deg, #a0aab5 0%, #616c77 100%); }
 
     .banner-container {
       width: 100%;
@@ -174,8 +152,9 @@
       color: #fff;
       border: 2px solid #000;
       border-radius: 8px;
-      padding: 4px 10px;
-      font-size: 14px;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
       cursor: pointer;
       font-weight: 800;
     }
@@ -223,7 +202,6 @@
     }
     .rule-item p { color: #ccc; font-size: 13px; line-height: 1.4; }
     .rule-item strong { color: #fff; }
-    .rule-item em { color: #ff4141; font-style: normal; font-weight: bold; }
 
     .toggle-row {
       display: flex;
@@ -246,7 +224,7 @@
     .toggle-on { background: #44d64a; color: #fff; }
     .toggle-off { background: #ff4141; color: #fff; }
 
-    /* Game Cards */
+    /* Game Cards & Lobby */
     .game-card {
       background: #1e130e;
       border: 3px solid #ffca28;
@@ -269,6 +247,17 @@
       gap: 6px;
     }
 
+    .code-display {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffca28;
+      letter-spacing: 3px;
+      background: #1e130e;
+      border: 2px dashed #ffca28;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
     .player-edit-input {
       width: 100%;
       text-align: center;
@@ -280,6 +269,26 @@
       border-radius: 8px;
       padding: 6px;
       outline: none;
+    }
+
+    .lobby-players-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    .lobby-player-chip {
+      background: #120b08;
+      border: 1px solid #3d2518;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     /* Secret Card Reveal */
@@ -344,17 +353,65 @@
       </div>
     </div>
 
-    <!-- SCREEN 2: PASS THE PHONE / SECRET REVEAL -->
+    <!-- SCREEN 2: HOST LOBBY SCREEN -->
+    <div class="screen hidden" id="hostLobbyScreen">
+      <div class="title-banner">
+        <span>HOST ROOM LOBBY</span>
+      </div>
+
+      <div class="game-card">
+        <div class="room-header-box">
+          <div style="font-size: 12px; color: #aaa; font-weight:700;">SHARE ROOM CODE WITH FRIENDS</div>
+          <div class="code-display" id="hostRoomCodeText">NAUG</div>
+        </div>
+
+        <div style="font-size: 14px; font-weight: 800; color: #fff;">PLAYERS IN LOBBY (<span id="hostPlayerCount">1</span>):</div>
+        <div class="lobby-players-list" id="hostPlayersListContainer">
+          <!-- Joined players will appear here -->
+        </div>
+
+        <button class="btn btn-play" id="hostStartGameBtn">START ONLINE GAME 🚀</button>
+      </div>
+
+      <button class="btn btn-back backToMenuBtn">⬅ EXIT TO MAIN MENU</button>
+    </div>
+
+    <!-- SCREEN 3: GUEST WAITING LOBBY SCREEN -->
+    <div class="screen hidden" id="guestLobbyScreen">
+      <div class="title-banner">
+        <span>WAITING LOBBY</span>
+      </div>
+
+      <div class="game-card">
+        <div class="room-header-box">
+          <div style="font-size: 12px; color: #aaa; font-weight:700;">ROOM CODE</div>
+          <div class="code-display" id="guestRoomCodeText">----</div>
+          <div style="font-size: 12px; color: #44d64a; font-weight:700; margin-top:4px;">Connected as: <span id="guestDisplayName">Player</span></div>
+        </div>
+
+        <div style="font-size: 14px; font-weight: 800; color: #fff;">PLAYERS JOINED:</div>
+        <div class="lobby-players-list" id="guestPlayersListContainer">
+          <!-- Joined players will appear here -->
+        </div>
+
+        <div style="text-align: center; font-size: 13px; color: #aaa; font-weight: 700; padding: 4px;">
+          ⏳ Waiting for host to start the game...
+        </div>
+      </div>
+
+      <button class="btn btn-back backToMenuBtn">⬅ LEAVE ROOM</button>
+    </div>
+
+    <!-- SCREEN 4: PASS THE PHONE / SECRET REVEAL -->
     <div class="screen hidden" id="revealScreen">
       <div class="title-banner">
-        <button class="header-back-btn backToMenuBtn">⬅ BACK</button>
-        <span>PASS THE PHONE</span>
+        <span>SECRET ROLE</span>
       </div>
 
       <div class="game-card">
         <div class="room-header-box">
           <div style="font-size: 12px; color: #aaa; font-weight:700;">PLAYER <span id="revealStepNum">1</span> OF <span id="revealTotalNum">5</span></div>
-          <div style="font-size: 13px; color: #fff; font-weight:700;">TYPE/EDIT YOUR NAME:</div>
+          <div style="font-size: 13px; color: #fff; font-weight:700;" id="revealNameBannerTitle">YOUR NAME:</div>
           <input type="text" class="player-edit-input" id="revealPlayerNameInput" maxlength="12" placeholder="Enter Name" />
         </div>
 
@@ -364,14 +421,15 @@
         </div>
 
         <button class="btn btn-secondary hidden" id="nextPlayerBtn">NEXT PLAYER ➡️</button>
-        <button class="btn btn-play hidden" id="startDiscussionBtn">BEGIN GAME 💬</button>
+        <button class="btn btn-play hidden" id="startDiscussionBtn">BEGIN DISCUSSION 💬</button>
       </div>
+
+      <button class="btn btn-back backToMenuBtn">⬅ EXIT TO MAIN MENU</button>
     </div>
 
-    <!-- SCREEN 3: DISCUSSION & VOTING -->
+    <!-- SCREEN 5: DISCUSSION & VOTING -->
     <div class="screen hidden" id="votingScreen">
       <div class="title-banner">
-        <button class="header-back-btn backToMenuBtn">⬅ BACK</button>
         <span>VOTING TIME</span>
       </div>
 
@@ -386,6 +444,8 @@
 
         <button class="btn btn-play" id="submitVoteBtn">SUBMIT VOTE 🗳️</button>
       </div>
+
+      <button class="btn btn-back backToMenuBtn">⬅ EXIT TO MAIN MENU</button>
     </div>
 
   </div>
@@ -395,7 +455,7 @@
     <div class="modal-card">
       <div class="modal-header">
         <h2>💀 GAME SETUP</h2>
-        <button class="close-btn" id="closeSetupBtn">⬅ BACK</button>
+        <button class="close-btn" id="closeSetupBtn">✖</button>
       </div>
 
       <div class="form-group">
@@ -425,12 +485,81 @@
     </div>
   </div>
 
+  <!-- MODAL: MULTIPLAYER MENU (CREATE / JOIN) -->
+  <div class="modal-overlay hidden" id="multiplayerModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🌐 MULTIPLAYER</h2>
+        <button class="close-btn" id="closeMultiplayerBtn">✖</button>
+      </div>
+
+      <div style="font-size: 14px; color: #ccc; text-align: center; font-weight: 700;">
+        Play online with friends across different devices!
+      </div>
+
+      <div class="button-list" style="margin-top: 6px;">
+        <button class="btn btn-secondary" id="openCreateRoomModalBtn">🏠 CREATE ROOM</button>
+        <button class="btn btn-multi" id="openJoinRoomModalBtn">🔗 JOIN ROOM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE ROOM CONFIG -->
+  <div class="modal-overlay hidden" id="createRoomModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🏠 CREATE ROOM</h2>
+        <button class="close-btn" id="closeCreateModalBtn">✖</button>
+      </div>
+
+      <div class="form-group">
+        <label>Your Host Nickname</label>
+        <input type="text" id="hostNameInput" placeholder="Host Name" maxlength="12" value="Host" />
+      </div>
+
+      <div class="form-group">
+        <label>Secret Category</label>
+        <select id="onlineCategorySelect">
+          <option value="random" selected>🎲 Random Category</option>
+          <option value="foods">🍕 Delicious Foods</option>
+          <option value="animals">🦁 Animals & Wildlife</option>
+          <option value="movies">🎬 Famous Movies</option>
+          <option value="naughty">😈 Naughty & Funny Words</option>
+        </select>
+      </div>
+
+      <button class="btn btn-secondary" id="confirmCreateRoomBtn">CREATE & OPEN LOBBY 🚀</button>
+    </div>
+  </div>
+
+  <!-- MODAL: JOIN ROOM INPUT -->
+  <div class="modal-overlay hidden" id="joinRoomModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🔗 JOIN ROOM</h2>
+        <button class="close-btn" id="closeJoinBtn">✖</button>
+      </div>
+
+      <div class="form-group">
+        <label>Enter Your Nickname</label>
+        <input type="text" id="joinPlayerName" placeholder="Your Name" maxlength="12" />
+      </div>
+
+      <div class="form-group">
+        <label>Enter Room Code</label>
+        <input type="text" id="roomCodeInput" placeholder="e.g. NAUG" maxlength="6" style="text-transform: uppercase;" />
+      </div>
+
+      <button class="btn btn-multi" id="connectRoomBtn">CONNECT TO ROOM 🚀</button>
+    </div>
+  </div>
+
   <!-- MODAL: HOW TO PLAY -->
   <div class="modal-overlay hidden" id="helpModal">
     <div class="modal-card">
       <div class="modal-header">
         <h2>📖 HOW TO PLAY</h2>
-        <button class="close-btn" id="closeHelpBtn">⬅ BACK</button>
+        <button class="close-btn" id="closeHelpBtn">✖</button>
       </div>
 
       <div class="rules-content">
@@ -461,7 +590,7 @@
     <div class="modal-card">
       <div class="modal-header">
         <h2>⚙️ SETTINGS</h2>
-        <button class="close-btn" id="closeSettingsBtn">⬅ BACK</button>
+        <button class="close-btn" id="closeSettingsBtn">✖</button>
       </div>
 
       <div class="toggle-row">
@@ -491,9 +620,12 @@
         secretWord: "",
         targetPlayerCount: 5,
         imposterCount: 1,
-        players: [], // { name, isImposter }
+        players: [], 
         currentRevealIndex: 0,
-        selectedVoteTarget: null
+        selectedVoteTarget: null,
+        isHost: false,
+        roomCode: "",
+        myNickname: ""
       };
 
       // AUDIO SYNTHESIZER
@@ -523,10 +655,10 @@
         document.getElementById(screenId).classList.remove("hidden");
       }
 
-      // GLOBAL BACK TO MAIN MENU ACTION
+      // BACK BUTTON EVENT LISTENER
       document.querySelectorAll(".backToMenuBtn").forEach(btn => {
         btn.addEventListener("click", () => {
-          if (confirm("Are you sure you want to go back to the Main Menu? Current round progress will be lost.")) {
+          if (confirm("Are you sure you want to exit to the Main Menu? Current game progress will be lost.")) {
             showScreen("menuScreen");
           }
         });
@@ -542,16 +674,121 @@
       };
 
       setupModal("playNowBtn", "playSetupModal", "closeSetupBtn");
+      setupModal("multiplayerBtn", "multiplayerModal", "closeMultiplayerBtn");
       setupModal("helpBtn", "helpModal", "closeHelpBtn");
       setupModal("settingsBtn", "settingsModal", "closeSettingsBtn");
       document.getElementById("gotItBtn").addEventListener("click", () => document.getElementById("helpModal").classList.add("hidden"));
 
-      // MULTIPLAYER PLACEHOLDER
-      document.getElementById("multiplayerBtn").addEventListener("click", () => {
-        alert("🌐 Online Multiplayer is coming soon!\n\nFor now, tap 'PLAY NOW' to play offline together on 1 phone!");
+      // MULTIPLAYER MODAL FLOW
+      const multiplayerModal = document.getElementById("multiplayerModal");
+      const createRoomModal = document.getElementById("createRoomModal");
+      const joinRoomModal = document.getElementById("joinRoomModal");
+
+      document.getElementById("openCreateRoomModalBtn").addEventListener("click", () => {
+        multiplayerModal.classList.add("hidden");
+        createRoomModal.classList.remove("hidden");
       });
 
-      // DYNAMIC IMPOSTERS DROPDOWN
+      document.getElementById("closeCreateModalBtn").addEventListener("click", () => {
+        createRoomModal.classList.add("hidden");
+      });
+
+      document.getElementById("openJoinRoomModalBtn").addEventListener("click", () => {
+        multiplayerModal.classList.add("hidden");
+        joinRoomModal.classList.remove("hidden");
+      });
+
+      document.getElementById("closeJoinBtn").addEventListener("click", () => {
+        joinRoomModal.classList.add("hidden");
+      });
+
+      // CREATE ROOM LOGIC
+      document.getElementById("confirmCreateRoomBtn").addEventListener("click", () => {
+        const hostName = document.getElementById("hostNameInput").value.trim() || "Host";
+        gameState.isHost = true;
+        gameState.myNickname = hostName;
+        gameState.roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+        gameState.categoryKey = document.getElementById("onlineCategorySelect").value;
+
+        gameState.players = [{ name: hostName, isImposter: false }];
+
+        document.getElementById("hostRoomCodeText").textContent = gameState.roomCode;
+        updateLobbyUI();
+
+        createRoomModal.classList.add("hidden");
+        showScreen("hostLobbyScreen");
+      });
+
+      // JOIN ROOM LOGIC
+      document.getElementById("connectRoomBtn").addEventListener("click", () => {
+        const name = document.getElementById("joinPlayerName").value.trim();
+        const code = document.getElementById("roomCodeInput").value.trim().toUpperCase();
+
+        if (!name || !code) {
+          alert("⚠️ Please enter both your nickname and room code!");
+          return;
+        }
+
+        gameState.isHost = false;
+        gameState.myNickname = name;
+        gameState.roomCode = code;
+
+        // Mocking joined players for UI display
+        gameState.players = [
+          { name: "HostPlayer", isImposter: false },
+          { name: name, isImposter: false }
+        ];
+
+        document.getElementById("guestRoomCodeText").textContent = code;
+        document.getElementById("guestDisplayName").textContent = name;
+        updateLobbyUI();
+
+        joinRoomModal.classList.add("hidden");
+        showScreen("guestLobbyScreen");
+      });
+
+      // UPDATE LOBBY PLAYER LISTS INTERFACE
+      function updateLobbyUI() {
+        // Host view
+        const hostList = document.getElementById("hostPlayersListContainer");
+        hostList.innerHTML = "";
+        document.getElementById("hostPlayerCount").textContent = gameState.players.length;
+
+        gameState.players.forEach((p, idx) => {
+          const chip = document.createElement("div");
+          chip.className = "lobby-player-chip";
+          chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#ffca28;">${idx === 0 ? '👑 HOST' : 'READY'}</span>`;
+          hostList.appendChild(chip);
+        });
+
+        // Guest view
+        const guestList = document.getElementById("guestPlayersListContainer");
+        guestList.innerHTML = "";
+        gameState.players.forEach((p) => {
+          const chip = document.createElement("div");
+          chip.className = "lobby-player-chip";
+          chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#44d64a;">CONNECTED</span>`;
+          guestList.appendChild(chip);
+        });
+      }
+
+      // HOST STARTS THE ONLINE MATCH
+      document.getElementById("hostStartGameBtn").addEventListener("click", () => {
+        if (gameState.players.length < 3) {
+          alert("⚠️ You need at least 3 players in the lobby to start!");
+          // For testing convenience, let's add dummy bots if under 3
+          while (gameState.players.length < 3) {
+            gameState.players.push({ name: `Bot ${gameState.players.length + 1}`, isImposter: false });
+          }
+          updateLobbyUI();
+        }
+
+        gameState.imposterCount = gameState.players.length >= 6 ? 2 : 1;
+        startNewRound();
+        showScreen("revealScreen");
+      });
+
+      // DYNAMIC IMPOSTERS DROPDOWN (OFFLINE MODE)
       const playersInput = document.getElementById("playersInput");
       const impostersSelect = document.getElementById("impostersSelect");
 
@@ -579,18 +816,15 @@
       document.getElementById("playNowBtn").addEventListener("click", updateImposterOptions);
       playersInput.addEventListener("input", updateImposterOptions);
 
-      // START GAME (INITIALIZE MATCH)
+      // START OFFLINE GAME
       document.getElementById("startGameBtn").addEventListener("click", () => {
         gameState.targetPlayerCount = parseInt(playersInput.value) || 5;
         gameState.imposterCount = parseInt(impostersSelect.value) || 1;
         gameState.categoryKey = document.getElementById("categorySelect").value;
 
-        // Maintain existing names if re-playing, or create default names
-        if (gameState.players.length !== gameState.targetPlayerCount) {
-          gameState.players = [];
-          for (let i = 1; i <= gameState.targetPlayerCount; i++) {
-            gameState.players.push({ name: `Player ${i}`, isImposter: false });
-          }
+        gameState.players = [];
+        for (let i = 1; i <= gameState.targetPlayerCount; i++) {
+          gameState.players.push({ name: `Player ${i}`, isImposter: false });
         }
 
         startNewRound();
@@ -600,7 +834,6 @@
 
       // SETUP NEW ROUND LOGIC
       function startNewRound() {
-        // Pick Category & Secret Word
         let availableCategories = Object.keys(WORD_DATABASE);
         if (gameState.categoryKey !== "random" && WORD_DATABASE[gameState.categoryKey]) {
           gameState.activeCategory = gameState.categoryKey;
@@ -611,7 +844,6 @@
         const categoryWords = WORD_DATABASE[gameState.activeCategory];
         gameState.secretWord = categoryWords[Math.floor(Math.random() * categoryWords.length)];
 
-        // Assign Imposters randomly
         gameState.players.forEach(p => p.isImposter = false);
         let assigned = 0;
         while (assigned < gameState.imposterCount) {
@@ -626,7 +858,7 @@
         setupSecretRevealStep();
       }
 
-      // REVEAL ROLE / PASS THE PHONE STEP
+      // REVEAL ROLE STEP
       function setupSecretRevealStep() {
         const player = gameState.players[gameState.currentRevealIndex];
         
@@ -646,13 +878,11 @@
         document.getElementById("startDiscussionBtn").classList.add("hidden");
       }
 
-      // SAVE EDITABLE NAME ON TYPING
       document.getElementById("revealPlayerNameInput").addEventListener("input", (e) => {
         const val = e.target.value.trim();
         gameState.players[gameState.currentRevealIndex].name = val || `Player ${gameState.currentRevealIndex + 1}`;
       });
 
-      // TAP SECRET CARD
       document.getElementById("secretBox").addEventListener("click", () => {
         const player = gameState.players[gameState.currentRevealIndex];
         const contentBox = document.getElementById("secretBoxContent");
@@ -675,13 +905,11 @@
         }
       });
 
-      // NEXT PLAYER BUTTON
       document.getElementById("nextPlayerBtn").addEventListener("click", () => {
         gameState.currentRevealIndex++;
         setupSecretRevealStep();
       });
 
-      // BEGIN GAME / START VOTING SCREEN
       document.getElementById("startDiscussionBtn").addEventListener("click", () => {
         document.getElementById("activeCategoryTag").textContent = gameState.activeCategory.toUpperCase();
         const voteList = document.getElementById("voteList");
@@ -703,7 +931,6 @@
         showScreen("votingScreen");
       });
 
-      // SUBMIT VOTE & RESULTS
       document.getElementById("submitVoteBtn").addEventListener("click", () => {
         if (!gameState.selectedVoteTarget) {
           alert("⚠️ Tap on a player to vote them out!");
@@ -720,16 +947,12 @@
           outcomeMessage = `💀 IMPOSTERS WIN!\n\n${accused.name} was INNOCENT!\n\nThe real imposter(s): ${imposters}\nSecret word was: ${gameState.secretWord}`;
         }
 
-        const playAgain = confirm(`${outcomeMessage}\n\nDo you want to play another round with the same players?`);
+        const playAgain = confirm(`${outcomeMessage}\n\nDo you want to return to the Main Menu?`);
         if (playAgain) {
-          startNewRound();
-          showScreen("revealScreen");
-        } else {
           showScreen("menuScreen");
         }
       });
 
-      // SETTINGS SOUND TOGGLE
       const soundToggleBtn = document.getElementById("soundToggleBtn");
       soundToggleBtn.addEventListener("click", () => {
         gameState.soundEnabled = !gameState.soundEnabled;
