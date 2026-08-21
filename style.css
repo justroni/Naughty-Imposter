@@ -170,6 +170,13 @@ body, html {
   color: #111;
 }
 
+.code-box {
+  text-align: center;
+  letter-spacing: 4px;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+}
+
 .form-row {
   display: flex;
   gap: 10px;
