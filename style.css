@@ -185,3 +185,50 @@ body, html {
 .half {
   flex: 1;
 }
+
+/* How to play formatting */
+.rules-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #120b08;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #3d2518;
+}
+
+.rule-num {
+  background: #ffca28;
+  color: #000;
+  font-weight: 800;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.rule-item p {
+  color: #ccc;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.rule-item strong {
+  color: #fff;
+}
+
+.rule-item em {
+  color: #ff4141;
+  font-style: normal;
+  font-weight: bold;
+}
