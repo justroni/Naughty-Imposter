@@ -284,6 +284,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      cursor: pointer;
     }
 
     .secret-title { font-size: 14px; color: #aaa; text-transform: uppercase; font-weight: 800; }
@@ -438,10 +439,10 @@
         <div class="room-header-box">
           <div style="font-size: 12px; color: #aaa; font-weight:700;">PLAYER <span id="revealStepNum">1</span> OF <span id="revealTotalNum">5</span></div>
           <div style="font-size: 13px; color: #fff; font-weight:700;">YOUR NAME:</div>
-          <input type="text" class="form-group input" id="revealPlayerNameInput" maxlength="12" style="text-align:center; font-size:18px; font-weight:800; color:#ffca28; background:#1e130e; border:2px solid #ffca28; border-radius:8px; padding:6px;" />
+          <input type="text" id="revealPlayerNameInput" maxlength="12" style="width:100%; text-align:center; font-size:18px; font-weight:800; color:#ffca28; background:#1e130e; border:2px solid #ffca28; border-radius:8px; padding:6px; outline:none;" />
         </div>
 
-        <div class="secret-box" id="secretBox" style="cursor: pointer;">
+        <div class="secret-box" id="secretBox">
           <div class="secret-title" id="secretBoxTitle">TAP TO REVEAL ROLE</div>
           <div class="secret-word" id="secretBoxContent">🙈 🙈 🙈</div>
         </div>
@@ -641,11 +642,13 @@
         } catch(e) {}
       }
 
-      document.getElementById("pigBanner").addEventListener("click", playFartSound);
+      const pigBanner = document.getElementById("pigBanner");
+      if (pigBanner) pigBanner.addEventListener("click", playFartSound);
 
       function showScreen(screenId) {
         document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-        document.getElementById(screenId).classList.remove("hidden");
+        const target = document.getElementById(screenId);
+        if (target) target.classList.remove("hidden");
       }
 
       document.querySelectorAll(".backToMenuBtn").forEach(btn => {
@@ -668,26 +671,42 @@
       setupModal("multiplayerBtn", "multiplayerModal", "closeMultiplayerBtn");
       setupModal("helpBtn", "helpModal", "closeHelpBtn");
       setupModal("settingsBtn", "settingsModal", "closeSettingsBtn");
-      document.getElementById("gotItBtn").addEventListener("click", () => document.getElementById("helpModal").classList.add("hidden"));
+      
+      const gotItBtn = document.getElementById("gotItBtn");
+      if (gotItBtn) gotItBtn.addEventListener("click", () => {
+        const helpModal = document.getElementById("helpModal");
+        if (helpModal) helpModal.classList.add("hidden");
+      });
 
       const multiplayerModal = document.getElementById("multiplayerModal");
       const createRoomModal = document.getElementById("createRoomModal");
       const joinRoomModal = document.getElementById("joinRoomModal");
 
-      document.getElementById("openCreateRoomModalBtn").addEventListener("click", () => {
-        multiplayerModal.classList.add("hidden");
-        createRoomModal.classList.remove("hidden");
+      const openCreateBtn = document.getElementById("openCreateRoomModalBtn");
+      if (openCreateBtn) openCreateBtn.addEventListener("click", () => {
+        if (multiplayerModal) multiplayerModal.classList.add("hidden");
+        if (createRoomModal) createRoomModal.classList.remove("hidden");
       });
-      document.getElementById("closeCreateModalBtn").addEventListener("click", () => createRoomModal.classList.add("hidden"));
 
-      document.getElementById("openJoinRoomModalBtn").addEventListener("click", () => {
-        multiplayerModal.classList.add("hidden");
-        joinRoomModal.classList.remove("hidden");
+      const closeCreateModalBtn = document.getElementById("closeCreateModalBtn");
+      if (closeCreateModalBtn) closeCreateModalBtn.addEventListener("click", () => {
+        if (createRoomModal) createRoomModal.classList.add("hidden");
       });
-      document.getElementById("closeJoinBtn").addEventListener("click", () => joinRoomModal.classList.add("hidden"));
+
+      const openJoinBtn = document.getElementById("openJoinRoomModalBtn");
+      if (openJoinBtn) openJoinBtn.addEventListener("click", () => {
+        if (multiplayerModal) multiplayerModal.classList.add("hidden");
+        if (joinRoomModal) joinRoomModal.classList.remove("hidden");
+      });
+
+      const closeJoinBtn = document.getElementById("closeJoinBtn");
+      if (closeJoinBtn) closeJoinBtn.addEventListener("click", () => {
+        if (joinRoomModal) joinRoomModal.classList.add("hidden");
+      });
 
       // REALTIME FIREBASE LISTENERS FOR ONLINE SYNC
       function listenToRoom(code) {
+        if (!window.dbModule) return;
         const { db, ref, onValue } = window.dbModule;
         
         // 1. Listen for players joining lobby
@@ -736,12 +755,21 @@
       }
 
       // CREATE ROOM
-      document.getElementById("confirmCreateRoomBtn").addEventListener("click", () => {
-        const hostName = document.getElementById("hostNameInput").value.trim() || "Host";
+      const confirmCreateRoomBtn = document.getElementById("confirmCreateRoomBtn");
+      if (confirmCreateRoomBtn) confirmCreateRoomBtn.addEventListener("click", () => {
+        const hostNameInput = document.getElementById("hostNameInput");
+        const hostName = hostNameInput ? hostNameInput.value.trim() : "Host";
         gameState.isHost = true;
-        gameState.myNickname = hostName;
+        gameState.myNickname = hostName || "Host";
         gameState.roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-        gameState.categoryKey = document.getElementById("onlineCategorySelect").value;
+        
+        const onlineCategorySelect = document.getElementById("onlineCategorySelect");
+        gameState.categoryKey = onlineCategorySelect ? onlineCategorySelect.value : "random";
+
+        if (!window.dbModule) {
+          alert("Database not initialized yet. Please wait a second and try again.");
+          return;
+        }
 
         const { db, ref, set } = window.dbModule;
         const roomRef = ref(db, 'rooms/' + gameState.roomCode);
@@ -750,12 +778,13 @@
           status: 'lobby',
           category: gameState.categoryKey,
           players: {
-            [hostName]: { name: hostName, isImposter: false }
+            [gameState.myNickname]: { name: gameState.myNickname, isImposter: false }
           }
         }).then(() => {
-          document.getElementById("hostRoomCodeText").textContent = gameState.roomCode;
+          const hostRoomCodeText = document.getElementById("hostRoomCodeText");
+          if (hostRoomCodeText) hostRoomCodeText.textContent = gameState.roomCode;
           listenToRoom(gameState.roomCode);
-          createRoomModal.classList.add("hidden");
+          if (createRoomModal) createRoomModal.classList.add("hidden");
           showScreen("hostLobbyScreen");
         }).catch(err => {
           alert("Error creating room: " + err.message);
@@ -763,12 +792,20 @@
       });
 
       // JOIN ROOM
-      document.getElementById("connectRoomBtn").addEventListener("click", () => {
-        const name = document.getElementById("joinPlayerName").value.trim();
-        const code = document.getElementById("roomCodeInput").value.trim().toUpperCase();
+      const connectRoomBtn = document.getElementById("connectRoomBtn");
+      if (connectRoomBtn) connectRoomBtn.addEventListener("click", () => {
+        const joinPlayerName = document.getElementById("joinPlayerName");
+        const roomCodeInput = document.getElementById("roomCodeInput");
+        const name = joinPlayerName ? joinPlayerName.value.trim() : "";
+        const code = roomCodeInput ? roomCodeInput.value.trim().toUpperCase() : "";
 
         if (!name || !code) {
           alert("⚠️ Please enter both your nickname and room code!");
+          return;
+        }
+
+        if (!window.dbModule) {
+          alert("Database not initialized yet. Please wait a second and try again.");
           return;
         }
 
@@ -789,10 +826,12 @@
 
             const playerRef = ref(db, 'rooms/' + code + '/players/' + name);
             set(playerRef, { name: name, isImposter: false }).then(() => {
-              document.getElementById("guestRoomCodeText").textContent = code;
-              document.getElementById("guestDisplayName").textContent = name;
+              const guestRoomCodeText = document.getElementById("guestRoomCodeText");
+              const guestDisplayName = document.getElementById("guestDisplayName");
+              if (guestRoomCodeText) guestRoomCodeText.textContent = code;
+              if (guestDisplayName) guestDisplayName.textContent = name;
               listenToRoom(code);
-              joinRoomModal.classList.add("hidden");
+              if (joinRoomModal) joinRoomModal.classList.add("hidden");
               showScreen("guestLobbyScreen");
             });
           } else {
@@ -803,9 +842,10 @@
 
       function updateLobbyUI() {
         const hostList = document.getElementById("hostPlayersListContainer");
+        const hostPlayerCount = document.getElementById("hostPlayerCount");
         if (hostList) {
           hostList.innerHTML = "";
-          document.getElementById("hostPlayerCount").textContent = gameState.players.length;
+          if (hostPlayerCount) hostPlayerCount.textContent = gameState.players.length;
           gameState.players.forEach((p, idx) => {
             const chip = document.createElement("div");
             chip.className = "lobby-player-chip";
@@ -827,9 +867,10 @@
       }
 
       // HOST STARTS ONLINE GAME
-      document.getElementById("hostStartGameBtn").addEventListener("click", () => {
-        if (gameState.players.length < 2) {
-          alert("⚠️ You need at least 2 players to start online!");
+      const hostStartGameBtn = document.getElementById("hostStartGameBtn");
+      if (hostStartGameBtn) hostStartGameBtn.addEventListener("click", () => {
+        if (gameState.players.length < 1) {
+          alert("⚠️ You need at least 1 player to start!");
           return;
         }
 
@@ -856,6 +897,7 @@
         gameState.secretWord = secretWord;
         gameState.players = Object.values(updatedPlayers);
 
+        if (!window.dbModule) return;
         const { db, ref, update } = window.dbModule;
         update(ref(db, 'rooms/' + gameState.roomCode), {
           status: 'playing',
@@ -870,44 +912,48 @@
       // SHOW ONLINE PRIVATE ROLE SCREEN
       function showOnlineRoleScreen() {
         showScreen("onlineGameScreen");
-        document.getElementById("onlineCategoryDisplay").textContent = gameState.activeCategory.toUpperCase();
-        document.getElementById("myOnlineNameDisplay").textContent = gameState.myNickname;
+        const catDisp = document.getElementById("onlineCategoryDisplay");
+        const nameDisp = document.getElementById("myOnlineNameDisplay");
+        if (catDisp) catDisp.textContent = gameState.activeCategory.toUpperCase();
+        if (nameDisp) nameDisp.textContent = gameState.myNickname;
 
-        // Find my personal status
         const me = gameState.players.find(p => p.name === gameState.myNickname);
         const titleEl = document.getElementById("myRoleTitle");
         const contentEl = document.getElementById("myRoleContent");
 
         if (me && me.isImposter) {
-          titleEl.textContent = "YOUR ROLE:";
-          contentEl.textContent = "😈 YOU ARE THE IMPOSTER!";
-          contentEl.className = "secret-word secret-imposter";
+          if (titleEl) titleEl.textContent = "YOUR ROLE:";
+          if (contentEl) {
+            contentEl.textContent = "😈 YOU ARE THE IMPOSTER!";
+            contentEl.className = "secret-word secret-imposter";
+          }
         } else {
-          titleEl.textContent = `SECRET WORD (${gameState.activeCategory.toUpperCase()}):`;
-          contentEl.textContent = gameState.secretWord;
-          contentEl.className = "secret-word";
+          if (titleEl) titleEl.textContent = `SECRET WORD (${gameState.activeCategory.toUpperCase()}):`;
+          if (contentEl) {
+            contentEl.textContent = gameState.secretWord;
+            contentEl.className = "secret-word";
+          }
         }
       }
 
       // READY TO REVEAL BUTTON (MUTUAL ALL-PLAYER CONFIRMATION)
-      document.getElementById("readyToRevealBtn").addEventListener("click", () => {
-        const { db, ref, set } = window.dbModule;
+      const readyToRevealBtn = document.getElementById("readyToRevealBtn");
+      if (readyToRevealBtn) readyToRevealBtn.addEventListener("click", () => {
+        if (!window.dbModule) return;
+        const { db, ref, set, get, update } = window.dbModule;
         const readyRef = ref(db, 'rooms/' + gameState.roomCode + '/readyForReveal/' + gameState.myNickname);
         
         set(readyRef, true).then(() => {
-          document.getElementById("readyToRevealBtn").disabled = true;
-          document.getElementById("readyToRevealBtn"].textContent = "⏳ WAITING FOR OTHER PLAYERS...";
-          document.getElementById("readyToRevealBtn").style.background = "#555";
+          readyToRevealBtn.disabled = true;
+          readyToRevealBtn.textContent = "⏳ WAITING FOR OTHER PLAYERS...";
+          readyToRevealBtn.style.background = "#555";
 
-          // Check if all players are ready (Host can trigger full reveal or check count)
-          const { get } = window.dbModule;
           get(ref(db, 'rooms/' + gameState.roomCode)).then((snapshot) => {
             const data = snapshot.val();
             if (data && data.readyForReveal && data.players) {
               const readyCount = Object.keys(data.readyForReveal).length;
               const totalCount = Object.keys(data.players).length;
               if (readyCount >= totalCount) {
-                // All players ready! Switch status to revealed for everyone
                 update(ref(db, 'rooms/' + gameState.roomCode), { status: 'revealed' });
               }
             }
@@ -917,23 +963,27 @@
 
       function showFinalResultsScreen() {
         showScreen("finalRevealScreen");
-        document.getElementById("finalSecretWordDisplay").textContent = gameState.secretWord;
+        const finalWordDisp = document.getElementById("finalSecretWordDisplay");
+        if (finalWordDisp) finalWordDisp.textContent = gameState.secretWord;
+        
         const listContainer = document.getElementById("finalRolesListContainer");
-        listContainer.innerHTML = "";
-
-        gameState.players.forEach(p => {
-          const chip = document.createElement("div");
-          chip.className = "lobby-player-chip";
-          if (p.isImposter) {
-            chip.innerHTML = `<span>😈 ${p.name}</span> <span style="font-size:11px; color:#ff4141; font-weight:800;">IMPOSTER</span>`;
-          } else {
-            chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#44d64a; font-weight:800;">INNOCENT</span>`;
-          }
-          listContainer.appendChild(chip);
-        });
+        if (listContainer) {
+          listContainer.innerHTML = "";
+          gameState.players.forEach(p => {
+            const chip = document.createElement("div");
+            chip.className = "lobby-player-chip";
+            if (p.isImposter) {
+              chip.innerHTML = `<span>😈 ${p.name}</span> <span style="font-size:11px; color:#ff4141; font-weight:800;">IMPOSTER</span>`;
+            } else {
+              chip.innerHTML = `<span>👤 ${p.name}</span> <span style="font-size:11px; color:#44d64a; font-weight:800;">INNOCENT</span>`;
+            }
+            listContainer.appendChild(chip);
+          });
+        }
       }
 
-      document.getElementById("backToMenuFromResults").addEventListener("click", () => {
+      const backToMenuFromResults = document.getElementById("backToMenuFromResults");
+      if (backToMenuFromResults) backToMenuFromResults.addEventListener("click", () => {
         showScreen("menuScreen");
       });
 
@@ -942,6 +992,7 @@
       const impostersSelect = document.getElementById("impostersSelect");
 
       function updateImposterOptions() {
+        if (!playersInput || !impostersSelect) return;
         let count = parseInt(playersInput.value) || 3;
         const currentSelected = impostersSelect.value;
         impostersSelect.innerHTML = "";
@@ -955,13 +1006,17 @@
         if (currentSelected && currentSelected <= maxImposters) impostersSelect.value = currentSelected;
       }
 
-      document.getElementById("playNowBtn").addEventListener("click", updateImposterOptions);
-      playersInput.addEventListener("input", updateImposterOptions);
+      const playNowBtn = document.getElementById("playNowBtn");
+      if (playNowBtn) playNowBtn.addEventListener("click", updateImposterOptions);
+      if (playersInput) playersInput.addEventListener("input", updateImposterOptions);
 
-      document.getElementById("startGameBtn").addEventListener("click", () => {
-        let targetCount = parseInt(playersInput.value) || 5;
-        let impCount = parseInt(impostersSelect.value) || 1;
-        gameState.categoryKey = document.getElementById("categorySelect").value;
+      const startGameBtn = document.getElementById("startGameBtn");
+      if (startGameBtn) startGameBtn.addEventListener("click", () => {
+        let targetCount = playersInput ? (parseInt(playersInput.value) || 5) : 5;
+        let impCount = impostersSelect ? (parseInt(impostersSelect.value) || 1) : 1;
+        
+        const categorySelect = document.getElementById("categorySelect");
+        gameState.categoryKey = categorySelect ? categorySelect.value : "random";
 
         gameState.players = [];
         for (let i = 1; i <= targetCount; i++) {
@@ -985,71 +1040,100 @@
         gameState.currentRevealIndex = 0;
         showScreen("revealScreen");
         setupOfflineRevealStep();
-        document.getElementById("playSetupModal").classList.add("hidden");
+        
+        const playSetupModal = document.getElementById("playSetupModal");
+        if (playSetupModal) playSetupModal.classList.add("hidden");
       });
 
       function setupOfflineRevealStep() {
         const player = gameState.players[gameState.currentRevealIndex];
-        document.getElementById("revealStepNum").textContent = gameState.currentRevealIndex + 1;
-        document.getElementById("revealTotalNum").textContent = gameState.players.length;
-        document.getElementById("revealPlayerNameInput").value = player.name;
+        if (!player) return;
 
-        document.getElementById("secretBoxTitle").textContent = "TAP TO REVEAL ROLE";
+        const revealStepNum = document.getElementById("revealStepNum");
+        const revealTotalNum = document.getElementById("revealTotalNum");
+        const revealPlayerNameInput = document.getElementById("revealPlayerNameInput");
+        
+        if (revealStepNum) revealStepNum.textContent = gameState.currentRevealIndex + 1;
+        if (revealTotalNum) revealTotalNum.textContent = gameState.players.length;
+        if (revealPlayerNameInput) revealPlayerNameInput.value = player.name;
+
+        const secretBoxTitle = document.getElementById("secretBoxTitle");
         const contentBox = document.getElementById("secretBoxContent");
-        contentBox.textContent = "🙈 🙈 🙈";
-        contentBox.className = "secret-word";
+        
+        if (secretBoxTitle) secretBoxTitle.textContent = "TAP TO REVEAL ROLE";
+        if (contentBox) {
+          contentBox.textContent = "🙈 🙈 🙈";
+          contentBox.className = "secret-word";
+        }
 
-        document.getElementById("nextPlayerBtn").classList.add("hidden");
-        document.getElementById("startDiscussionBtn").classList.add("hidden");
+        const nextPlayerBtn = document.getElementById("nextPlayerBtn");
+        const startDiscussionBtn = document.getElementById("startDiscussionBtn");
+        if (nextPlayerBtn) nextPlayerBtn.classList.add("hidden");
+        if (startDiscussionBtn) startDiscussionBtn.classList.add("hidden");
       }
 
-      document.getElementById("revealPlayerNameInput").addEventListener("input", (e) => {
+      const revealNameInput = document.getElementById("revealPlayerNameInput");
+      if (revealNameInput) revealNameInput.addEventListener("input", (e) => {
         const val = e.target.value.trim();
         if (gameState.players[gameState.currentRevealIndex]) {
           gameState.players[gameState.currentRevealIndex].name = val || `Player ${gameState.currentRevealIndex + 1}`;
         }
       });
 
-      document.getElementById("secretBox").addEventListener("click", () => {
+      const secretBox = document.getElementById("secretBox");
+      if (secretBox) secretBox.addEventListener("click", () => {
         const player = gameState.players[gameState.currentRevealIndex];
+        if (!player) return;
+
         const contentBox = document.getElementById("secretBoxContent");
         const titleBox = document.getElementById("secretBoxTitle");
 
         if (player.isImposter) {
-          titleBox.textContent = "YOUR ROLE:";
-          contentBox.textContent = "😈 YOU ARE THE IMPOSTER!";
-          contentBox.className = "secret-word secret-imposter";
+          if (titleBox) titleBox.textContent = "YOUR ROLE:";
+          if (contentBox) {
+            contentBox.textContent = "😈 YOU ARE THE IMPOSTER!";
+            contentBox.className = "secret-word secret-imposter";
+          }
         } else {
-          titleBox.textContent = `CATEGORY: ${gameState.activeCategory.toUpperCase()}`;
-          contentBox.textContent = gameState.secretWord;
-          contentBox.className = "secret-word";
+          if (titleBox) titleBox.textContent = `CATEGORY: ${gameState.activeCategory.toUpperCase()}`;
+          if (contentBox) {
+            contentBox.textContent = gameState.secretWord;
+            contentBox.className = "secret-word";
+          }
         }
 
+        const nextPlayerBtn = document.getElementById("nextPlayerBtn");
+        const startDiscussionBtn = document.getElementById("startDiscussionBtn");
+
         if (gameState.currentRevealIndex < gameState.players.length - 1) {
-          document.getElementById("nextPlayerBtn").classList.remove("hidden");
+          if (nextPlayerBtn) nextPlayerBtn.classList.remove("hidden");
         } else {
-          document.getElementById("startDiscussionBtn").classList.remove("hidden");
+          if (startDiscussionBtn) startDiscussionBtn.classList.remove("hidden");
         }
       });
 
-      document.getElementById("nextPlayerBtn").addEventListener("click", () => {
+      const nextPlayerBtn = document.getElementById("nextPlayerBtn");
+      if (nextPlayerBtn) nextPlayerBtn.addEventListener("click", () => {
         gameState.currentRevealIndex++;
         setupOfflineRevealStep();
       });
 
-      document.getElementById("startDiscussionBtn").addEventListener("click", () => {
+      const startDiscussionBtn = document.getElementById("startDiscussionBtn");
+      if (startDiscussionBtn) startDiscussionBtn.addEventListener("click", () => {
         showScreen("menuScreen");
       });
 
       const soundToggleBtn = document.getElementById("soundToggleBtn");
-      soundToggleBtn.addEventListener("click", () => {
+      if (soundToggleBtn) soundToggleBtn.addEventListener("click", () => {
         gameState.soundEnabled = !gameState.soundEnabled;
         soundToggleBtn.textContent = gameState.soundEnabled ? "ON" : "OFF";
         soundToggleBtn.className = gameState.soundEnabled ? "toggle-btn toggle-on" : "toggle-btn toggle-off";
       });
 
-      document.getElementById("saveSettingsBtn").addEventListener("click", () => {
-        document.getElementById("settingsModal").classList.add("hidden");
+      const saveSettingsBtn = document.getElementById("saveSettingsBtn");
+      if (saveSettingsBtn) saveSettingsBtn.addEventListener("click", () => {
+        const settingsModal = document.getElementById("settingsModal");
+        if (settingsModal) settingsModal.classList.add("hidden");
       });
     });
   </script>
