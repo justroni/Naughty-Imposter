@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Naughty Imposter</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
   <div class="menu-container">
@@ -64,7 +64,7 @@
         <div class="form-group half">
           <label>Imposters</label>
           <select id="impostersSelect">
-            <!-- Dynamically populated by script.js -->
+            <!-- Dynamically populated -->
           </select>
         </div>
       </div>
@@ -92,6 +92,40 @@
       </div>
 
       <button class="btn btn-join" id="enterRoomBtn">ENTER LOBBY 🎮</button>
+    </div>
+  </div>
+
+  <!-- How To Play Modal -->
+  <div class="modal-overlay hidden" id="helpModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>📖 HOW TO PLAY</h2>
+        <button class="close-btn" id="closeHelpBtn">✖</button>
+      </div>
+
+      <div class="rules-content">
+        <div class="rule-item">
+          <span class="rule-num">1</span>
+          <p><strong>Secret Word:</strong> Everyone gets the secret word except the <em>Naughty Imposter</em>!</p>
+        </div>
+
+        <div class="rule-item">
+          <span class="rule-num">2</span>
+          <p><strong>Give Clues:</strong> Take turns saying a one-word clue about the secret item.</p>
+        </div>
+
+        <div class="rule-item">
+          <span class="rule-num">3</span>
+          <p><strong>Bluffing:</strong> The Imposter doesn't know the word and must fake it to blend in.</p>
+        </div>
+
+        <div class="rule-item">
+          <span class="rule-num">4</span>
+          <p><strong>Vote & Win:</strong> Discuss and vote out the suspect! Innocent players win if they catch the Imposter.</p>
+        </div>
+      </div>
+
+      <button class="btn btn-help" id="gotItBtn">GOT IT! 👍</button>
     </div>
   </div>
 
