@@ -289,7 +289,7 @@
 
     .secret-title { font-size: 14px; color: #aaa; text-transform: uppercase; font-weight: 800; }
     .secret-word { font-size: 24px; font-weight: 800; color: #ffca28; }
-    .secret-imposter { color: #ff4141 !important; font-size: 22px; }
+    .secret-imposter { color: #ff4141 !important; font-size: 20px; }
   </style>
 
   <!-- Firebase SDKs -->
@@ -575,7 +575,7 @@
         </div>
         <div class="rule-item">
           <span class="rule-num">2</span>
-          <p><strong>Private Roles:</strong> You only see your own role on your phone. Imposters must fake it!</p>
+          <p><strong>Private Roles:</strong> You only see your own role on your phone. Imposters receive a helpful hint to fake it!</p>
         </div>
         <div class="rule-item">
           <span class="rule-num">3</span>
@@ -607,10 +607,51 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const WORD_DATABASE = {
-        foods: ["PIZZA", "BURGER", "SUSHI", "TACO", "DONUT", "PANCAKES", "ICE CREAM", "HOT DOG", "FRIES", "PASTA"],
-        animals: ["LION", "PENGUIN", "ELEPHANT", "GIRAFFE", "SLOTH", "MONKEY", "DOLPHIN", "PANDA", "KANGAROO", "PIG"],
-        movies: ["TITANIC", "AVATAR", "INCEPTION", "FROZEN", "SHREK", "JURASSIC PARK", "BATMAN", "SPIDERMAN", "BARBIE"],
-        naughty: ["STINKY SOCK", "BURP BOMB", "BUTT CHEEKS", "TOILET PAPER", "FART CANNON", "SNOT ROCKET", "BANANA PEEL", "POOP EMOJI"]
+        foods: [
+          { word: "BANANA", hints: ["yellow", "long", "fruit"] },
+          { word: "PIZZA", hints: ["round, cheesy, slices"] },
+          { word: "BURGER", hints: ["beef, bun, cheese"] },
+          { word: "SUSHI", hints: ["rice, fish, seaweed"] },
+          { word: "TACO", hints: ["mexican, shell, meat"] },
+          { word: "DONUT", hints: ["sweet, ring-shaped, glazed"] },
+          { word: "PANCAKES", hints: ["breakfast, syrup, flat"] },
+          { word: "ICE CREAM", hints: ["cold, sweet, scoop"] },
+          { word: "HOT DOG", hints: ["sausage, bun, mustard"] },
+          { word: "FRIES", hints: ["crispy, potato, salty"] }
+        ],
+        animals: [
+          { word: "LION", hints: ["king of jungle, mane, roar"] },
+          { word: "PENGUIN", hints: ["ice, tuxedo, flightless bird"] },
+          { word: "ELEPHANT", hints: ["trunk, big ears, grey"] },
+          { word: "GIRAFFE", hints: ["tall, long neck, spots"] },
+          { word: "SLOTH", hints: ["slow, trees, lazy"] },
+          { word: "MONKEY", hints: ["banana, tree, climb"] },
+          { word: "DOLPHIN", hints: ["smart, ocean, jump"] },
+          { word: "PANDA", hints: ["black and white, bamboo, bear"] },
+          { word: "KANGAROO", hints: ["australia, pouch, hop"] },
+          { word: "PIG", hints: ["mud, pink, farm"] }
+        ],
+        movies: [
+          { word: "TITANIC", hints: ["ship, iceberg, ocean"] },
+          { word: "AVATAR", hints: ["blue people, aliens, sci-fi"] },
+          { word: "INCEPTION", hints: ["dreams, spinning top, mind"] },
+          { word: "FROZEN", hints: ["ice, princess, snowman"] },
+          { word: "SHREK", hints: ["ogre, swamp, green"] },
+          { word: "JURASSIC PARK", hints: ["dinosaurs, island, escape"] },
+          { word: "BATMAN", hints: ["dark knight, Gotham, cape"] },
+          { word: "SPIDERMAN", hints: ["web, hero, bug"] },
+          { word: "BARBIE", hints: ["pink, doll, plastic"] }
+        ],
+        naughty: [
+          { word: "STINKY SOCK", hints: ["foot, smell, dirty"] },
+          { word: "BURP BOMB", hints: ["gas, loud, stomach"] },
+          { word: "BUTT CHEEKS", hints: ["sit, body, pants"] },
+          { word: "TOILET PAPER", hints: ["bathroom, roll, wipe"] },
+          { word: "FART CANNON", hints: ["gas, noise, bomb"] },
+          { word: "SNOT ROCKET", hints: ["nose, mucus, gross"] },
+          { word: "BANANA PEEL", hints: ["yellow, long, slip"] },
+          { word: "POOP EMOJI", hints: ["brown, smile, smelly"] }
+        ]
       };
 
       let gameState = {
@@ -618,6 +659,7 @@
         categoryKey: "random",
         activeCategory: "",
         secretWord: "",
+        currentHints: [],
         players: [],
         isHost: false,
         roomCode: "",
@@ -709,7 +751,6 @@
         if (!window.dbModule) return;
         const { db, ref, onValue } = window.dbModule;
         
-        // 1. Listen for players joining lobby
         const playersRef = ref(db, 'rooms/' + code + '/players');
         onValue(playersRef, (snapshot) => {
           const data = snapshot.val();
@@ -719,7 +760,6 @@
           }
         });
 
-        // 2. Listen for game status updates
         const roomRef = ref(db, 'rooms/' + code);
         onValue(roomRef, (snapshot) => {
           const roomData = snapshot.val();
@@ -728,6 +768,7 @@
           if (roomData.status === 'playing' && !gameState.isHost) {
             gameState.activeCategory = roomData.category;
             gameState.secretWord = roomData.secretWord;
+            gameState.currentHints = roomData.hints || [];
             if (roomData.players) {
               gameState.players = Object.values(roomData.players);
             }
@@ -742,7 +783,6 @@
             showFinalResultsScreen();
           }
 
-          // Update ready counter UI
           if (roomData.readyForReveal && roomData.status === 'playing') {
             const readyCount = Object.keys(roomData.readyForReveal).length;
             const totalCount = gameState.players.length;
@@ -879,10 +919,13 @@
         if (activeCat === "random" || !WORD_DATABASE[activeCat]) {
           activeCat = availableCategories[Math.floor(Math.random() * availableCategories.length)];
         }
-        const words = WORD_DATABASE[activeCat];
-        const secretWord = words[Math.floor(Math.random() * words.length)];
+        const categoryItems = WORD_DATABASE[activeCat];
+        const selectedObj = categoryItems[Math.floor(Math.random() * categoryItems.length)];
+        
+        gameState.activeCategory = activeCat;
+        gameState.secretWord = selectedObj.word;
+        gameState.currentHints = selectedObj.hints;
 
-        // Assign imposters securely
         let impCount = gameState.players.length >= 6 ? 2 : 1;
         let shuffled = [...gameState.players].sort(() => 0.5 - Math.random());
         let imposterNames = shuffled.slice(0, impCount).map(p => p.name);
@@ -893,8 +936,6 @@
           updatedPlayers[p.name] = { name: p.name, isImposter: isImp };
         });
 
-        gameState.activeCategory = activeCat;
-        gameState.secretWord = secretWord;
         gameState.players = Object.values(updatedPlayers);
 
         if (!window.dbModule) return;
@@ -902,7 +943,8 @@
         update(ref(db, 'rooms/' + gameState.roomCode), {
           status: 'playing',
           category: activeCat,
-          secretWord: secretWord,
+          secretWord: selectedObj.word,
+          hints: selectedObj.hints,
           players: updatedPlayers
         }).then(() => {
           showOnlineRoleScreen();
@@ -924,7 +966,8 @@
         if (me && me.isImposter) {
           if (titleEl) titleEl.textContent = "YOUR ROLE:";
           if (contentEl) {
-            contentEl.textContent = "😈 YOU ARE THE IMPOSTER!";
+            const hintText = gameState.currentHints.length > 0 ? gameState.currentHints.join(", ") : "general, clues";
+            contentEl.innerHTML = `😈 YOU ARE THE IMPOSTER!<br><span style="font-size:14px; color:#ffca28; margin-top:8px; display:block; font-weight:700;">💡 Hint: ${hintText}</span>`;
             contentEl.className = "secret-word secret-imposter";
           }
         } else {
@@ -1025,8 +1068,11 @@
 
         let availableCategories = Object.keys(WORD_DATABASE);
         gameState.activeCategory = (gameState.categoryKey !== "random") ? gameState.categoryKey : availableCategories[Math.floor(Math.random() * availableCategories.length)];
-        const categoryWords = WORD_DATABASE[gameState.activeCategory];
-        gameState.secretWord = categoryWords[Math.floor(Math.random() * categoryWords.length)];
+        
+        const categoryItems = WORD_DATABASE[gameState.activeCategory];
+        const selectedObj = categoryItems[Math.floor(Math.random() * categoryItems.length)];
+        gameState.secretWord = selectedObj.word;
+        gameState.currentHints = selectedObj.hints;
 
         let assigned = 0;
         while (assigned < impCount) {
@@ -1091,7 +1137,8 @@
         if (player.isImposter) {
           if (titleBox) titleBox.textContent = "YOUR ROLE:";
           if (contentBox) {
-            contentBox.textContent = "😈 YOU ARE THE IMPOSTER!";
+            const hintText = gameState.currentHints.length > 0 ? gameState.currentHints.join(", ") : "general clues";
+            contentBox.innerHTML = `😈 YOU ARE THE IMPOSTER!<br><span style="font-size:14px; color:#ffca28; margin-top:8px; display:block; font-weight:700;">💡 Hint: ${hintText}</span>`;
             contentBox.className = "secret-word secret-imposter";
           }
         } else {
